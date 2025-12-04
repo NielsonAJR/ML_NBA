@@ -9,6 +9,9 @@ website:
       - href: index.qmd
         text: Home
       - about.qmd
+    right:
+      - icon: github
+        href: https://github.com/NielsonAJR/ML_NBA
 
 format:
   html:
@@ -19,6 +22,7 @@ format:
     toc: true
     code-fold: true
     code-summary: "Mostrar código"
+    number-sections: true
 
 
 

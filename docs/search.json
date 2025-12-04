@@ -4,7 +4,21 @@
     "href": "index.html",
     "title": "As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA",
     "section": "",
-    "text": "Introdução"
+    "text": "Este projeto apresenta uma implementação de um Workflow para um projeto de Aprendizagem de Máquina (ML) aplicado à análise de dados esportivos, com enfâse no desempenho de jogadores da National Basketball Association (NBA) durante a temporada 2021-2022.\n\n\nCom o crescimento e a disponibilidade de dados estatísticos no esporte, técnicas de análise preditiva e aprendizado de máquina tornam-se ferramentas valiosas para compreender padrões de desempenho. Na NBA, as posições tradicionais (Point Guard, Shooting Guard, Small Forward, Power Forward e Center) representam papéis específicos em quadra, mas a evolução do jogo tem desafiado essas categorizações.\n\n\n\n\n\n\nImplementar e documentar uma pipelina que possa ser reproduzida usando métodos de Machine Learning para análise do desempenho dos jogadores da NBA por posição\n\n\n\n\n\nColetar dados da temporada 21-22 da NBA\nRealizar uma análise exploratória para identificar padrões por posição\nAplicar técnicas de pré-processamentos nos dados\nImplementar e comparadas modelos de classificação\nAvaliar a peformance dos modelos usando as métricas\nExtrair insights sobre a relação entre as estatísticas e as posições"
+  },
+  {
+    "objectID": "index.html#introdução",
+    "href": "index.html#introdução",
+    "title": "As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA",
+    "section": "",
+    "text": "Este projeto apresenta uma implementação de um Workflow para um projeto de Aprendizagem de Máquina (ML) aplicado à análise de dados esportivos, com enfâse no desempenho de jogadores da National Basketball Association (NBA) durante a temporada 2021-2022.\n\n\nCom o crescimento e a disponibilidade de dados estatísticos no esporte, técnicas de análise preditiva e aprendizado de máquina tornam-se ferramentas valiosas para compreender padrões de desempenho. Na NBA, as posições tradicionais (Point Guard, Shooting Guard, Small Forward, Power Forward e Center) representam papéis específicos em quadra, mas a evolução do jogo tem desafiado essas categorizações.\n\n\n\n\n\n\nImplementar e documentar uma pipelina que possa ser reproduzida usando métodos de Machine Learning para análise do desempenho dos jogadores da NBA por posição\n\n\n\n\n\nColetar dados da temporada 21-22 da NBA\nRealizar uma análise exploratória para identificar padrões por posição\nAplicar técnicas de pré-processamentos nos dados\nImplementar e comparadas modelos de classificação\nAvaliar a peformance dos modelos usando as métricas\nExtrair insights sobre a relação entre as estatísticas e as posições"
+  },
+  {
+    "objectID": "index.html#metodologia",
+    "href": "index.html#metodologia",
+    "title": "As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA",
+    "section": "2 Metodologia",
+    "text": "2 Metodologia\nO projeto segue um Fluxo de Trabalho, conforme as etapas a seguir:\n\nColeta dos dados brutos\nExploração dos dados utilizando técnicas de análise exploratória\nPré-processamento com limpeza e transformação\nModelagem utilizando algoritmos de ML\nAvaliação dos modelos\nInterpretação dos resultados\n\n\n2.1 Ferramentas Utilizadas\n\nLinguagem: R\nFramework de documentação: Quarto\nPacotes principais:\n\ntidyverse usado para manipulação de dados\ntidymodels usado para modelagem\nggplot2 usado para visualização\nhoopR usado para carregar o banco de dados"
   },
   {
     "objectID": "about.html",
