@@ -3,7 +3,8 @@ project:
   output-dir: docs
 
 website:
-  title: "nielsonajr"
+  title: "As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA"
+  description: "Website interativo documentando o pipeline completo de análise de desempenho por posição"
   navbar:
     left:
       - href: index.qmd
@@ -12,11 +13,13 @@ website:
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: 
+      light: flatly
+      dark: darkly
     css: styles.css
     toc: true
+    code-fold: true
+    code-summary: "Mostrar código"
 
 
 
