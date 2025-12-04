@@ -3,8 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA"
-  description: "Website interativo documentando o pipeline completo de análise de desempenho por posição"
+  title: ""
   navbar:
     left:
       - href: index.qmd
