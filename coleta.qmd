@@ -1,0 +1,73 @@
+---
+title: "Coleta de Dados"
+lang: pt
+message: false
+warning: false
+---
+
+## Configurações Iniciais
+
+### Carregando pacotes
+
+```{r}
+
+library(hoopR) # Banco de Dados
+library(tidyverse) # Framework do tidyverse
+library(tidymodels) # Framework de modelagem
+library(skimr) # Estatística descritiva rápida
+library(DataExplorer) # Exploração do conjunto de dados
+library(corrplot) # Gráfico de correlação
+library(GGally) # Gráficos adicionais com estrutura ggplot2
+library(stringr) # Para lidar com strings
+library(glmnet) # LASSO, Ridge e Rede Elástica
+library(MASS) # Discriminante Linear (LDA) e Quadrático (RL)
+library(recipes) # Pré-processamento dos dados
+library(class) #knn
+library(themis) # Balanceamento de dados
+library(discrim) # lda, qda
+library(kknn) # (Kernel) K-NN
+library(finetune) # Otimização fina de hiperparâmetros
+library(gt)
+library(naivebayes)
+
+ggplot2::theme_set(theme_minimal()) # Ajustando Tema
+
+```
+
+
+### Importando e Manipulando o Banco de Dados
+
+
+```{r}
+
+dados_basicos <- nba_leaguedashplayerstats(season = "2021-22")$LeagueDashPlayerStats
+
+
+dados_analise <- dados_basicos %>%
+  dplyr::select(PLAYER_NAME, TEAM_ABBREVIATION, AGE, PTS, AST, REB = REB, 
+         FG_PCT, FG3_PCT, FT_PCT, MIN) %>%
+  dplyr::mutate(
+    Faixa_Etaria = case_when(
+      AGE < 25 ~ "Jovem",
+      AGE <= 30 ~ "Adulto", 
+      AGE > 30 ~ "Veterano"
+    ),
+    Position = case_when(
+      PLAYER_NAME %in% c("Stephen Curry", "Luka Doncic") ~ "PG",
+      PLAYER_NAME %in% c("Ivica Zubac", "Cody Zeller") ~ "C",
+      PLAYER_NAME %in% c("Thaddeus Young", "Moses Wright") ~ "PF",
+      PLAYER_NAME %in% c("Max Strus", "Andrew Wiggins") ~ "SF",
+      PLAYER_NAME %in% c("Donovan Mitchell", "Moses Moody") ~ "SG",
+      TRUE ~ "To_Map" 
+    ),
+    PTS = as.numeric(PTS),
+    AGE = as.numeric(AGE),
+    AST = as.numeric(AST),
+    REB = as.numeric(REB)
+      ) 
+
+# Position - Armador (PG), Ala-armador (SG), Ala (SF), Ala-pivô (PF) e Pivô (C)
+
+
+```
+

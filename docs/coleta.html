@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Nielson Alexandre de Almeida Dantas Junior">
-<meta name="description" content="Website interativo documentando a pipeline completo de análise de desempenho por posição">
 
-<title>As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA</title>
+<title>Coleta de Dados</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -88,11 +120,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./coleta.html"> 
+    <a class="nav-link active" href="./coleta.html" aria-current="page"> 
 <span class="menu-text">Coleta</span></a>
   </li>  
   <li class="nav-item">
@@ -123,14 +155,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Nesta página</h2>
    
   <ul>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução"><span class="header-section-number">1</span> Introdução</a>
+  <li><a href="#configurações-iniciais" id="toc-configurações-iniciais" class="nav-link active" data-scroll-target="#configurações-iniciais"><span class="header-section-number">1</span> Configurações Iniciais</a>
   <ul class="collapse">
-  <li><a href="#contextualização" id="toc-contextualização" class="nav-link" data-scroll-target="#contextualização"><span class="header-section-number">1.1</span> Contextualização</a></li>
-  <li><a href="#objetivos" id="toc-objetivos" class="nav-link" data-scroll-target="#objetivos"><span class="header-section-number">1.2</span> Objetivos</a></li>
-  </ul></li>
-  <li><a href="#metodologia" id="toc-metodologia" class="nav-link" data-scroll-target="#metodologia"><span class="header-section-number">2</span> Metodologia</a>
-  <ul class="collapse">
-  <li><a href="#ferramentas-utilizadas" id="toc-ferramentas-utilizadas" class="nav-link" data-scroll-target="#ferramentas-utilizadas"><span class="header-section-number">2.1</span> Ferramentas Utilizadas</a></li>
+  <li><a href="#carregando-pacotes" id="toc-carregando-pacotes" class="nav-link" data-scroll-target="#carregando-pacotes"><span class="header-section-number">1.1</span> Carregando pacotes</a></li>
+  <li><a href="#importando-e-manipulando-o-banco-de-dados" id="toc-importando-e-manipulando-o-banco-de-dados" class="nav-link" data-scroll-target="#importando-e-manipulando-o-banco-de-dados"><span class="header-section-number">1.2</span> Importando e Manipulando o Banco de Dados</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -140,24 +168,13 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA</h1>
+<h1 class="title">Coleta de Dados</h1>
 </div>
 
-<div>
-  <div class="description">
-    Website interativo documentando a pipeline completo de análise de desempenho por posição
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Autor</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nielson Alexandre de Almeida Dantas Junior </p>
-          </div>
-  </div>
     
   
     
@@ -168,58 +185,70 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introdução" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="introdução"><span class="header-section-number">1</span> Introdução</h2>
-<p>Este projeto apresenta uma implementação de um Workflow para um projeto de Aprendizagem de Máquina (ML) aplicado à análise de dados esportivos, com enfâse no desempenho de jogadores da National Basketball Association (NBA) durante a temporada 2021-2022.</p>
-<section id="contextualização" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="contextualização"><span class="header-section-number">1.1</span> Contextualização</h3>
-<p>Com o crescimento e a disponibilidade de dados estatísticos no esporte, técnicas de análise preditiva e aprendizado de máquina tornam-se ferramentas valiosas para compreender padrões de desempenho. Na NBA, as posições tradicionais (Point Guard, Shooting Guard, Small Forward, Power Forward e Center) representam papéis específicos em quadra, mas a evolução do jogo tem desafiado essas categorizações.</p>
+<section id="configurações-iniciais" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="configurações-iniciais"><span class="header-section-number">1</span> Configurações Iniciais</h2>
+<section id="carregando-pacotes" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="carregando-pacotes"><span class="header-section-number">1.1</span> Carregando pacotes</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hoopR) <span class="co"># Banco de Dados</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Framework do tidyverse</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels) <span class="co"># Framework de modelagem</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr) <span class="co"># Estatística descritiva rápida</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer) <span class="co"># Exploração do conjunto de dados</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot) <span class="co"># Gráfico de correlação</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally) <span class="co"># Gráficos adicionais com estrutura ggplot2</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr) <span class="co"># Para lidar com strings</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet) <span class="co"># LASSO, Ridge e Rede Elástica</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS) <span class="co"># Discriminante Linear (LDA) e Quadrático (RL)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(recipes) <span class="co"># Pré-processamento dos dados</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(class) <span class="co">#knn</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(themis) <span class="co"># Balanceamento de dados</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(discrim) <span class="co"># lda, qda</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kknn) <span class="co"># (Kernel) K-NN</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finetune) <span class="co"># Otimização fina de hiperparâmetros</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naivebayes)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>()) <span class="co"># Ajustando Tema</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 </section>
-<section id="objetivos" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="objetivos"><span class="header-section-number">1.2</span> Objetivos</h3>
-<section id="objetivos-geral" class="level4" data-number="1.2.1">
-<h4 data-number="1.2.1" class="anchored" data-anchor-id="objetivos-geral"><span class="header-section-number">1.2.1</span> Objetivos Geral</h4>
-<ul>
-<li>Implementar e documentar uma pipelina que possa ser reproduzida usando métodos de Machine Learning para análise do desempenho dos jogadores da NBA por posição</li>
-</ul>
-</section>
-<section id="objetivos-específicos" class="level4" data-number="1.2.2">
-<h4 data-number="1.2.2" class="anchored" data-anchor-id="objetivos-específicos"><span class="header-section-number">1.2.2</span> Objetivos Específicos</h4>
-<ul>
-<li>Coletar dados da temporada 21-22 da NBA</li>
-<li>Realizar uma análise exploratória para identificar padrões por posição</li>
-<li>Aplicar técnicas de pré-processamentos nos dados</li>
-<li>Implementar e comparadas modelos de classificação</li>
-<li>Avaliar a peformance dos modelos usando as métricas</li>
-<li>Extrair insights sobre a relação entre as estatísticas e as posições</li>
-</ul>
-</section>
-</section>
-</section>
-<section id="metodologia" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="metodologia"><span class="header-section-number">2</span> Metodologia</h2>
-<p>O projeto segue um Fluxo de Trabalho, conforme as etapas a seguir:</p>
-<ol type="1">
-<li>Coleta dos dados brutos</li>
-<li>Exploração dos dados utilizando técnicas de análise exploratória</li>
-<li>Pré-processamento com limpeza e transformação</li>
-<li>Modelagem utilizando algoritmos de ML</li>
-<li>Avaliação dos modelos</li>
-<li>Interpretação dos resultados</li>
-</ol>
-<section id="ferramentas-utilizadas" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="ferramentas-utilizadas"><span class="header-section-number">2.1</span> Ferramentas Utilizadas</h3>
-<ul>
-<li><strong>Linguagem:</strong> R</li>
-<li><strong>Framework de documentação:</strong> Quarto</li>
-<li><strong>Pacotes principais:</strong>
-<ul>
-<li><code>tidyverse</code> usado para manipulação de dados</li>
-<li><code>tidymodels</code> usado para modelagem</li>
-<li><code>ggplot2</code> usado para visualização</li>
-<li><code>hoopR</code> usado para carregar o banco de dados</li>
-</ul></li>
-</ul>
+<section id="importando-e-manipulando-o-banco-de-dados" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="importando-e-manipulando-o-banco-de-dados"><span class="header-section-number">1.2</span> Importando e Manipulando o Banco de Dados</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dados_basicos <span class="ot">&lt;-</span> <span class="fu">nba_leaguedashplayerstats</span>(<span class="at">season =</span> <span class="st">"2021-22"</span>)<span class="sc">$</span>LeagueDashPlayerStats</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="ot">&lt;-</span> dados_basicos <span class="sc">%&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(PLAYER_NAME, TEAM_ABBREVIATION, AGE, PTS, AST, <span class="at">REB =</span> REB, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>         FG_PCT, FG3_PCT, FT_PCT, MIN) <span class="sc">%&gt;%</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Faixa_Etaria =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      AGE <span class="sc">&lt;</span> <span class="dv">25</span> <span class="sc">~</span> <span class="st">"Jovem"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      AGE <span class="sc">&lt;=</span> <span class="dv">30</span> <span class="sc">~</span> <span class="st">"Adulto"</span>, </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      AGE <span class="sc">&gt;</span> <span class="dv">30</span> <span class="sc">~</span> <span class="st">"Veterano"</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">Position =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Stephen Curry"</span>, <span class="st">"Luka Doncic"</span>) <span class="sc">~</span> <span class="st">"PG"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Ivica Zubac"</span>, <span class="st">"Cody Zeller"</span>) <span class="sc">~</span> <span class="st">"C"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Thaddeus Young"</span>, <span class="st">"Moses Wright"</span>) <span class="sc">~</span> <span class="st">"PF"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Max Strus"</span>, <span class="st">"Andrew Wiggins"</span>) <span class="sc">~</span> <span class="st">"SF"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Donovan Mitchell"</span>, <span class="st">"Moses Moody"</span>) <span class="sc">~</span> <span class="st">"SG"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"To_Map"</span> </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">PTS =</span> <span class="fu">as.numeric</span>(PTS),</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">AGE =</span> <span class="fu">as.numeric</span>(AGE),</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">AST =</span> <span class="fu">as.numeric</span>(AST),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">REB =</span> <span class="fu">as.numeric</span>(REB)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>      ) </span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Position - Armador (PG), Ala-armador (SG), Ala (SF), Ala-pivô (PF) e Pivô (C)</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 
 
 </section>
