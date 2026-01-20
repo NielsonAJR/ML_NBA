@@ -222,9 +222,11 @@ dados_analise <- dados_basicos %>%
   ) 
 
 
-
 # Position - Armador (PG), Ala-armador (SG), Ala (SF), Ala-pivô (PF) e Pivô (C)
 
 
 ```
+
+
+O ajuste 
 
