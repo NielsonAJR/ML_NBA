@@ -3,6 +3,8 @@ title: "Coleta de Dados"
 lang: pt
 message: false
 warning: false
+linkcolor: black
+urlcolor: black
 ---
 
 ## Configurações Iniciais
@@ -31,6 +33,8 @@ library(gt)
 library(naivebayes)
 
 ggplot2::theme_set(theme_minimal()) # Ajustando Tema
+
+
 
 ```
 
@@ -217,7 +221,11 @@ dados_analise <- dados_basicos %>%
     AGE = as.numeric(AGE),
     AST = as.numeric(AST),
     REB = as.numeric(REB),
-    Position = as.factor(Position)
+    Position = as.factor(Position),
+    FG_PCT = as.numeric(FG_PCT),
+    FG3_PCT = as.numeric(FG3_PCT),
+    FT_PCT = as.numeric(FT_PCT),
+    MIN = as.numeric(MIN)
   ) 
 
 
@@ -227,5 +235,26 @@ dados_analise <- dados_basicos %>%
 ```
 
 
-O ajuste 
+## Fonte dos Dados
+
+Os dados utilizados neste projeto referem-se a estatística individuais de cada jogador da NBA na Temporada 2021-2022, obtidas com bases públicas que consolidam as informações de desempenho por atleta ao longo da temporada. Vale ressaltar que a base foi retirada do pacote *hoopR* juntamente ao site
+[Basketball Reference](https://www.basketball-reference.com/leagues/NBA_2022_totals.html).
+
+## Descrição das Variáveis
+
+O banco de dados possui 12 variáveis, na qual, a variável *PLAYER_NAME* e *TEAM_ABBREVIATION* não irrelevantes para o projeto. Sendo assim, as variáveis utilizadas serão:
+
+| Variável | Descrição |
+|--------|----------|
+| AGE | Idade do jogador |
+| PTS | Média de pontos por jogo |
+| AST | Média de assistências por jogo |
+| REB | Média de rebotes por jogo |
+| MIN | Minutos médios em quadra |
+| FG_PCT | Percentual de arremessos convertidos |
+| FG3_PCT | Percentual de arremessos de 3 pontos |
+| FT_PCT | Percentual de lances livres |
+| Position | Posição principal do jogador |
+| Faixa_Etaria | Classificação etária do atleta |
+
 

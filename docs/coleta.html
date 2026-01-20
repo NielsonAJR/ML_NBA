@@ -73,8 +73,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-f3c2ea88cadbcfb37ba28ffa2c97cfc1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-ae2d0dcda2edce4ab590422bb373b64f.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-ad9e4618aab9003beabe780ce7b57208.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-4f83212ba5cb674bea5682fffee4ca3c.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -128,6 +128,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Coleta</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./aed.html"> 
+<span class="menu-text">AED</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">Sobre</span></a>
   </li>  
@@ -160,6 +164,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#carregando-pacotes" id="toc-carregando-pacotes" class="nav-link" data-scroll-target="#carregando-pacotes"><span class="header-section-number">1.1</span> Carregando pacotes</a></li>
   <li><a href="#importando-e-manipulando-o-banco-de-dados" id="toc-importando-e-manipulando-o-banco-de-dados" class="nav-link" data-scroll-target="#importando-e-manipulando-o-banco-de-dados"><span class="header-section-number">1.2</span> Importando e Manipulando o Banco de Dados</a></li>
   </ul></li>
+  <li><a href="#fonte-dos-dados" id="toc-fonte-dos-dados" class="nav-link" data-scroll-target="#fonte-dos-dados"><span class="header-section-number">2</span> Fonte dos Dados</a></li>
+  <li><a href="#descrição-das-variáveis" id="toc-descrição-das-variáveis" class="nav-link" data-scroll-target="#descrição-das-variáveis"><span class="header-section-number">3</span> Descrição das Variáveis</a></li>
   </ul>
 </nav>
     </div>
@@ -397,17 +403,78 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>    <span class="at">AGE =</span> <span class="fu">as.numeric</span>(AGE),</span>
 <span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>    <span class="at">AST =</span> <span class="fu">as.numeric</span>(AST),</span>
 <span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>    <span class="at">REB =</span> <span class="fu">as.numeric</span>(REB),</span>
-<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>    <span class="at">Position =</span> <span class="fu">as.factor</span>(Position)</span>
-<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>  ) </span>
-<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a><span class="co"># Position - Armador (PG), Ala-armador (SG), Ala (SF), Ala-pivô (PF) e Pivô (C)</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>    <span class="at">Position =</span> <span class="fu">as.factor</span>(Position),</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>    <span class="at">FG_PCT =</span> <span class="fu">as.numeric</span>(FG_PCT),</span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>    <span class="at">FG3_PCT =</span> <span class="fu">as.numeric</span>(FG3_PCT),</span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>    <span class="at">FT_PCT =</span> <span class="fu">as.numeric</span>(FT_PCT),</span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>    <span class="at">MIN =</span> <span class="fu">as.numeric</span>(MIN)</span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a><span class="co"># Position - Armador (PG), Ala-armador (SG), Ala (SF), Ala-pivô (PF) e Pivô (C)</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>O ajuste</p>
-
-
 </section>
+</section>
+<section id="fonte-dos-dados" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="fonte-dos-dados"><span class="header-section-number">2</span> Fonte dos Dados</h2>
+<p>Os dados utilizados neste projeto referem-se a estatística individuais de cada jogador da NBA na Temporada 2021-2022, obtidas com bases públicas que consolidam as informações de desempenho por atleta ao longo da temporada. Vale ressaltar que a base foi retirada do pacote <em>hoopR</em> juntamente ao site <a href="https://www.basketball-reference.com/leagues/NBA_2022_totals.html">Basketball Reference</a>.</p>
+</section>
+<section id="descrição-das-variáveis" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="descrição-das-variáveis"><span class="header-section-number">3</span> Descrição das Variáveis</h2>
+<p>O banco de dados possui 12 variáveis, na qual, a variável <em>PLAYER_NAME</em> e <em>TEAM_ABBREVIATION</em> não irrelevantes para o projeto. Sendo assim, as variáveis utilizadas serão:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Variável</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AGE</td>
+<td>Idade do jogador</td>
+</tr>
+<tr class="even">
+<td>PTS</td>
+<td>Média de pontos por jogo</td>
+</tr>
+<tr class="odd">
+<td>AST</td>
+<td>Média de assistências por jogo</td>
+</tr>
+<tr class="even">
+<td>REB</td>
+<td>Média de rebotes por jogo</td>
+</tr>
+<tr class="odd">
+<td>MIN</td>
+<td>Minutos médios em quadra</td>
+</tr>
+<tr class="even">
+<td>FG_PCT</td>
+<td>Percentual de arremessos convertidos</td>
+</tr>
+<tr class="odd">
+<td>FG3_PCT</td>
+<td>Percentual de arremessos de 3 pontos</td>
+</tr>
+<tr class="even">
+<td>FT_PCT</td>
+<td>Percentual de lances livres</td>
+</tr>
+<tr class="odd">
+<td>Position</td>
+<td>Posição principal do jogador</td>
+</tr>
+<tr class="even">
+<td>Faixa_Etaria</td>
+<td>Classificação etária do atleta</td>
+</tr>
+</tbody>
+</table>
+
+
 </section>
 
 </main> <!-- /main -->

@@ -1,0 +1,201 @@
+---
+title: "Análise Exploratória de Dados"
+lang: pt
+message: false
+warning: false
+linkcolor: black
+urlcolor: black
+---
+
+
+```{r}
+#| echo: false
+
+library(hoopR) # Banco de Dados
+library(tidyverse) # Framework do tidyverse
+library(tidymodels) # Framework de modelagem
+library(skimr) # Estatística descritiva rápida
+library(DataExplorer) # Exploração do conjunto de dados
+library(corrplot) # Gráfico de correlação
+library(GGally) # Gráficos adicionais com estrutura ggplot2
+library(stringr) # Para lidar com strings
+library(glmnet) # LASSO, Ridge e Rede Elástica
+library(MASS) # Discriminante Linear (LDA) e Quadrático (RL)
+library(recipes) # Pré-processamento dos dados
+library(class) #knn
+library(themis) # Balanceamento de dados
+library(discrim) # lda, qda
+library(kknn) # (Kernel) K-NN
+library(finetune) # Otimização fina de hiperparâmetros
+library(gt)
+library(naivebayes)
+library(knitr)
+library(corrplot)
+
+
+ggplot2::theme_set(theme_minimal()) # Ajustando Tema
+
+dados_analise <- read.csv2("includes/nba.csv", sep = ";") 
+
+dados_analise <- dados_analise |>
+  mutate(
+    PTS = as.numeric(PTS),
+    AGE = as.numeric(AGE),
+    AST = as.numeric(AST),
+    REB = as.numeric(REB),
+    Position = as.factor(Position),
+    FG_PCT = as.numeric(FG_PCT),
+    FG3_PCT = as.numeric(FG3_PCT),
+    FT_PCT = as.numeric(FT_PCT),
+    MIN = as.numeric(MIN)
+  )
+
+```
+
+
+## Estatísticas Descritivas
+
+
+### Variáveis Numéricas
+
+```{r}
+
+dados_analise |>
+  dplyr::select(AGE, PTS, AST, REB, FG_PCT, FG3_PCT, FT_PCT, MIN) |>
+  summary()
+    
+
+```
+
+
+### Variáveis Categóricas
+
+```{r}
+
+table(dados_analise$Position)
+table(dados_analise$Faixa_Etaria)
+
+```
+
+## Visualização Gráfica
+
+### Distribuição de idade
+
+```{r}
+
+ggplot(dados_analise, aes(x = AGE)) +
+  geom_histogram(bins = 15, fill = "steelblue", color = "black") +
+  labs(title = "Distribuição da Idade dos Jogadores",
+       x = "Idade", y = "Frequência")
+
+```
+
+### Distribuição das posições
+
+```{r}
+
+ggplot(dados_analise, aes(x = Position)) +
+  geom_bar(fill = "steelblue") +
+  labs(
+    title = "Distribuição das Posições dos Jogadores",
+    x = "Posição",
+    y = "Quantidade de Jogadores"
+  )
+
+
+```
+
+### Pontos por posição
+
+```{r}
+
+ggplot(dados_analise, aes(x = Position, y = PTS, fill = Position)) +
+  geom_boxplot() +
+  labs(title = "Distribuição de Pontos por Posição",
+       x = "Posição", y = "Pontos")
+
+
+```
+
+
+### Separabilidade entre posições
+
+```{r}
+
+ggplot(dados_analise, aes(x = AST, y = REB, color = Position)) +
+  geom_point(alpha = 0.7) +
+  labs(
+    title = "Separabilidade entre Posições (Assistências vs Rebotes)",
+    x = "Assistências",
+    y = "Rebotes"
+  )
+
+
+```
+
+
+
+### Relação entre minutos e pontos
+
+
+```{r}
+
+ggplot(dados_analise, aes(x = MIN, y = PTS)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Minutos vs Pontos",
+       x = "Minutos Jogados", y = "Pontos")
+
+```
+
+
+### Eficiência no arremesso (FG%)
+
+```{r}
+
+ggplot(dados_analise, aes(x = FG_PCT)) +
+  geom_histogram(bins = 15, fill = "darkgreen", color = "black") +
+  labs(title = "Distribuição do FG%",
+       x = "Field Goal %", y = "Frequência")
+
+```
+
+
+
+## Análise por Faixa Etária
+
+
+```{r}
+
+dados_analise %>%
+  group_by(Faixa_Etaria) %>%
+  summarise(
+    media_pts = mean(PTS, na.rm = TRUE),
+    media_ast = mean(AST, na.rm = TRUE),
+    media_reb = mean(REB, na.rm = TRUE),
+    n = n()
+  ) |> knitr::kable()
+
+
+```
+
+
+## Correlação entre variáveis numéricas
+
+
+```{r}
+
+
+
+corrplot(
+  cor(dados_analise %>% dplyr::select(PTS, AST, REB, MIN), use = "complete.obs"),
+  method = "color",
+  tl.col = "black"
+)
+
+
+```
+
+
+## Principais Insights da Análise Exploratória
+

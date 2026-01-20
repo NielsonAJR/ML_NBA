@@ -10,6 +10,8 @@ website:
         text: Home
       - href: coleta.qmd
         text: Coleta
+      - href: aed.qmd
+        text: AED
       - about.qmd
     right:
       - icon: github

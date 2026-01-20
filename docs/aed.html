@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Nielson Alexandre de Almeida Dantas Junior">
-<meta name="description" content="Website interativo documentando a pipeline completo de análise de desempenho por posição">
 
-<title>As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA</title>
+<title>Análise Exploratória de Dados</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -41,8 +73,8 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b53751a350365c71b6c909e95f209ed1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-f3c2ea88cadbcfb37ba28ffa2c97cfc1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-ae2d0dcda2edce4ab590422bb373b64f.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-ad9e4618aab9003beabe780ce7b57208.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-4f83212ba5cb674bea5682fffee4ca3c.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -88,7 +120,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -96,7 +128,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Coleta</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./aed.html"> 
+    <a class="nav-link active" href="./aed.html" aria-current="page"> 
 <span class="menu-text">AED</span></a>
   </li>  
   <li class="nav-item">
@@ -127,15 +159,23 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Nesta página</h2>
    
   <ul>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução"><span class="header-section-number">1</span> Introdução</a>
+  <li><a href="#estatísticas-descritivas" id="toc-estatísticas-descritivas" class="nav-link active" data-scroll-target="#estatísticas-descritivas"><span class="header-section-number">1</span> Estatísticas Descritivas</a>
   <ul class="collapse">
-  <li><a href="#contextualização" id="toc-contextualização" class="nav-link" data-scroll-target="#contextualização"><span class="header-section-number">1.1</span> Contextualização</a></li>
-  <li><a href="#objetivos" id="toc-objetivos" class="nav-link" data-scroll-target="#objetivos"><span class="header-section-number">1.2</span> Objetivos</a></li>
+  <li><a href="#variáveis-numéricas" id="toc-variáveis-numéricas" class="nav-link" data-scroll-target="#variáveis-numéricas"><span class="header-section-number">1.1</span> Variáveis Numéricas</a></li>
+  <li><a href="#variáveis-categóricas" id="toc-variáveis-categóricas" class="nav-link" data-scroll-target="#variáveis-categóricas"><span class="header-section-number">1.2</span> Variáveis Categóricas</a></li>
   </ul></li>
-  <li><a href="#metodologia" id="toc-metodologia" class="nav-link" data-scroll-target="#metodologia"><span class="header-section-number">2</span> Metodologia</a>
+  <li><a href="#visualização-gráfica" id="toc-visualização-gráfica" class="nav-link" data-scroll-target="#visualização-gráfica"><span class="header-section-number">2</span> Visualização Gráfica</a>
   <ul class="collapse">
-  <li><a href="#ferramentas-utilizadas" id="toc-ferramentas-utilizadas" class="nav-link" data-scroll-target="#ferramentas-utilizadas"><span class="header-section-number">2.1</span> Ferramentas Utilizadas</a></li>
+  <li><a href="#distribuição-de-idade" id="toc-distribuição-de-idade" class="nav-link" data-scroll-target="#distribuição-de-idade"><span class="header-section-number">2.1</span> Distribuição de idade</a></li>
+  <li><a href="#distribuição-das-posições" id="toc-distribuição-das-posições" class="nav-link" data-scroll-target="#distribuição-das-posições"><span class="header-section-number">2.2</span> Distribuição das posições</a></li>
+  <li><a href="#pontos-por-posição" id="toc-pontos-por-posição" class="nav-link" data-scroll-target="#pontos-por-posição"><span class="header-section-number">2.3</span> Pontos por posição</a></li>
+  <li><a href="#separabilidade-entre-posições" id="toc-separabilidade-entre-posições" class="nav-link" data-scroll-target="#separabilidade-entre-posições"><span class="header-section-number">2.4</span> Separabilidade entre posições</a></li>
+  <li><a href="#relação-entre-minutos-e-pontos" id="toc-relação-entre-minutos-e-pontos" class="nav-link" data-scroll-target="#relação-entre-minutos-e-pontos"><span class="header-section-number">2.5</span> Relação entre minutos e pontos</a></li>
+  <li><a href="#eficiência-no-arremesso-fg" id="toc-eficiência-no-arremesso-fg" class="nav-link" data-scroll-target="#eficiência-no-arremesso-fg"><span class="header-section-number">2.6</span> Eficiência no arremesso (FG%)</a></li>
   </ul></li>
+  <li><a href="#análise-por-faixa-etária" id="toc-análise-por-faixa-etária" class="nav-link" data-scroll-target="#análise-por-faixa-etária"><span class="header-section-number">3</span> Análise por Faixa Etária</a></li>
+  <li><a href="#correlação-entre-variáveis-numéricas" id="toc-correlação-entre-variáveis-numéricas" class="nav-link" data-scroll-target="#correlação-entre-variáveis-numéricas"><span class="header-section-number">4</span> Correlação entre variáveis numéricas</a></li>
+  <li><a href="#principais-insights-da-análise-exploratória" id="toc-principais-insights-da-análise-exploratória" class="nav-link" data-scroll-target="#principais-insights-da-análise-exploratória"><span class="header-section-number">5</span> Principais Insights da Análise Exploratória</a></li>
   </ul>
 </nav>
     </div>
@@ -144,24 +184,13 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA</h1>
+<h1 class="title">Análise Exploratória de Dados</h1>
 </div>
 
-<div>
-  <div class="description">
-    Website interativo documentando a pipeline completo de análise de desempenho por posição
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Autor</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nielson Alexandre de Almeida Dantas Junior </p>
-          </div>
-  </div>
     
   
     
@@ -172,61 +201,259 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introdução" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="introdução"><span class="header-section-number">1</span> Introdução</h2>
-<p>Este projeto apresenta uma implementação de um Workflow para um projeto de Aprendizagem de Máquina (ML) aplicado à análise de dados esportivos, com enfâse no desempenho de jogadores da National Basketball Association (NBA) durante a temporada 2021-2022.</p>
-<section id="contextualização" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="contextualização"><span class="header-section-number">1.1</span> Contextualização</h3>
-<p>Com o crescimento e a disponibilidade de dados estatísticos no esporte, técnicas de análise preditiva e aprendizado de máquina tornam-se ferramentas valiosas para compreender padrões de desempenho. Na NBA, as posições tradicionais (Point Guard, Shooting Guard, Small Forward, Power Forward e Center) representam papéis específicos em quadra, mas a evolução do jogo tem desafiado essas categorizações.</p>
+<section id="estatísticas-descritivas" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="estatísticas-descritivas"><span class="header-section-number">1</span> Estatísticas Descritivas</h2>
+<section id="variáveis-numéricas" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="variáveis-numéricas"><span class="header-section-number">1.1</span> Variáveis Numéricas</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(AGE, PTS, AST, REB, FG_PCT, FG3_PCT, FT_PCT, MIN) <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      AGE             PTS              AST             REB        
+ Min.   :19.00   Min.   :   0.0   Min.   :  0.0   Min.   :   0.0  
+ 1st Qu.:23.00   1st Qu.:  67.0   1st Qu.: 12.0   1st Qu.:  33.0  
+ Median :25.00   Median : 319.0   Median : 59.0   Median : 135.0  
+ Mean   :26.17   Mean   : 449.8   Mean   :100.2   Mean   : 180.7  
+ 3rd Qu.:29.00   3rd Qu.: 685.0   3rd Qu.:145.0   3rd Qu.: 271.0  
+ Max.   :42.00   Max.   :2155.0   Max.   :737.0   Max.   :1019.0  
+     FG_PCT          FG3_PCT           FT_PCT            MIN           
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :   0.8433  
+ 1st Qu.:0.3930   1st Qu.:0.2370   1st Qu.:0.6250   1st Qu.: 194.7883  
+ Median :0.4410   Median :0.3270   Median :0.7530   Median : 883.2283  
+ Mean   :0.4319   Mean   :0.2825   Mean   :0.6747   Mean   : 981.4050  
+ 3rd Qu.:0.4960   3rd Qu.:0.3690   3rd Qu.:0.8360   3rd Qu.:1669.5300  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :2854.3533  </code></pre>
+</div>
+</div>
 </section>
-<section id="objetivos" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="objetivos"><span class="header-section-number">1.2</span> Objetivos</h3>
-<section id="objetivos-geral" class="level4" data-number="1.2.1">
-<h4 data-number="1.2.1" class="anchored" data-anchor-id="objetivos-geral"><span class="header-section-number">1.2.1</span> Objetivos Geral</h4>
-<ul>
-<li>Implementar e documentar uma pipelina que possa ser reproduzida usando métodos de Machine Learning para análise do desempenho dos jogadores da NBA por posição</li>
-</ul>
+<section id="variáveis-categóricas" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="variáveis-categóricas"><span class="header-section-number">1.2</span> Variáveis Categóricas</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dados_analise<span class="sc">$</span>Position)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  C  PF  PG  SF  SG 
+109 106 111 122 157 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dados_analise<span class="sc">$</span>Faixa_Etaria)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Adulto    Jovem Veterano 
+     259      251       95 </code></pre>
+</div>
+</div>
 </section>
-<section id="objetivos-específicos" class="level4" data-number="1.2.2">
-<h4 data-number="1.2.2" class="anchored" data-anchor-id="objetivos-específicos"><span class="header-section-number">1.2.2</span> Objetivos Específicos</h4>
-<ul>
-<li>Coletar dados da temporada 21-22 da NBA</li>
-<li>Realizar uma análise exploratória para identificar padrões por posição</li>
-<li>Aplicar técnicas de pré-processamentos nos dados</li>
-<li>Implementar e comparadas modelos de classificação</li>
-<li>Avaliar a peformance dos modelos usando as métricas</li>
-<li>Extrair insights sobre a relação entre as estatísticas e as posições</li>
-</ul>
+</section>
+<section id="visualização-gráfica" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="visualização-gráfica"><span class="header-section-number">2</span> Visualização Gráfica</h2>
+<section id="distribuição-de-idade" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="distribuição-de-idade"><span class="header-section-number">2.1</span> Distribuição de idade</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> AGE)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição da Idade dos Jogadores"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Idade"</span>, <span class="at">y =</span> <span class="st">"Frequência"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aed_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="distribuição-das-posições" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="distribuição-das-posições"><span class="header-section-number">2.2</span> Distribuição das posições</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> Position)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribuição das Posições dos Jogadores"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Posição"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Quantidade de Jogadores"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aed_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="pontos-por-posição" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="pontos-por-posição"><span class="header-section-number">2.3</span> Pontos por posição</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> Position, <span class="at">y =</span> PTS, <span class="at">fill =</span> Position)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição de Pontos por Posição"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Posição"</span>, <span class="at">y =</span> <span class="st">"Pontos"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aed_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="separabilidade-entre-posições" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="separabilidade-entre-posições"><span class="header-section-number">2.4</span> Separabilidade entre posições</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> AST, <span class="at">y =</span> REB, <span class="at">color =</span> Position)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Separabilidade entre Posições (Assistências vs Rebotes)"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Assistências"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Rebotes"</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aed_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="relação-entre-minutos-e-pontos" class="level3" data-number="2.5">
+<h3 data-number="2.5" class="anchored" data-anchor-id="relação-entre-minutos-e-pontos"><span class="header-section-number">2.5</span> Relação entre minutos e pontos</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> MIN, <span class="at">y =</span> PTS)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Minutos vs Pontos"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Minutos Jogados"</span>, <span class="at">y =</span> <span class="st">"Pontos"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aed_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="eficiência-no-arremesso-fg" class="level3" data-number="2.6">
+<h3 data-number="2.6" class="anchored" data-anchor-id="eficiência-no-arremesso-fg"><span class="header-section-number">2.6</span> Eficiência no arremesso (FG%)</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> FG_PCT)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">fill =</span> <span class="st">"darkgreen"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição do FG%"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Field Goal %"</span>, <span class="at">y =</span> <span class="st">"Frequência"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aed_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
+<section id="análise-por-faixa-etária" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="análise-por-faixa-etária"><span class="header-section-number">3</span> Análise por Faixa Etária</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Faixa_Etaria) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_pts =</span> <span class="fu">mean</span>(PTS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_ast =</span> <span class="fu">mean</span>(AST, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_reb =</span> <span class="fu">mean</span>(REB, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Faixa_Etaria</th>
+<th style="text-align: right;">media_pts</th>
+<th style="text-align: right;">media_ast</th>
+<th style="text-align: right;">media_reb</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Adulto</td>
+<td style="text-align: right;">453.2625</td>
+<td style="text-align: right;">96.27027</td>
+<td style="text-align: right;">186.3282</td>
+<td style="text-align: right;">259</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jovem</td>
+<td style="text-align: right;">411.6375</td>
+<td style="text-align: right;">87.92032</td>
+<td style="text-align: right;">161.3267</td>
+<td style="text-align: right;">251</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Veterano</td>
+<td style="text-align: right;">541.0421</td>
+<td style="text-align: right;">143.51579</td>
+<td style="text-align: right;">216.7895</td>
+<td style="text-align: right;">95</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
-<section id="metodologia" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="metodologia"><span class="header-section-number">2</span> Metodologia</h2>
-<p>O projeto segue um Fluxo de Trabalho, conforme as etapas a seguir:</p>
-<ol type="1">
-<li>Coleta dos dados brutos</li>
-<li>Exploração dos dados utilizando técnicas de análise exploratória</li>
-<li>Pré-processamento com limpeza e transformação</li>
-<li>Modelagem utilizando algoritmos de ML</li>
-<li>Avaliação dos modelos</li>
-<li>Interpretação dos resultados</li>
-</ol>
-<section id="ferramentas-utilizadas" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="ferramentas-utilizadas"><span class="header-section-number">2.1</span> Ferramentas Utilizadas</h3>
-<ul>
-<li><strong>Linguagem:</strong> R</li>
-<li><strong>Framework de documentação:</strong> Quarto</li>
-<li><strong>Pacotes principais:</strong>
-<ul>
-<li><code>tidyverse</code> usado para manipulação de dados</li>
-<li><code>tidymodels</code> usado para modelagem</li>
-<li><code>ggplot2</code> usado para visualização</li>
-<li><code>hoopR</code> usado para carregar o banco de dados</li>
-</ul></li>
-</ul>
+<section id="correlação-entre-variáveis-numéricas" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="correlação-entre-variáveis-numéricas"><span class="header-section-number">4</span> Correlação entre variáveis numéricas</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(dados_analise <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(PTS, AST, REB, MIN), <span class="at">use =</span> <span class="st">"complete.obs"</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"color"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">tl.col =</span> <span class="st">"black"</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aed_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="principais-insights-da-análise-exploratória" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="principais-insights-da-análise-exploratória"><span class="header-section-number">5</span> Principais Insights da Análise Exploratória</h2>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
