@@ -85,7 +85,6 @@ dados_analise <- dados_basicos %>%
                          "Malik Newman", "Sharife Cooper", "McKinley Wright IV", 
                          "Darren Collison", "Carlik Jones", "Emmanuel Mudiay", "Tyrell Terry", 
                          "Cat Barber", "JaQuori McLaughlin", "Jaysean Paige") ~ "PG",
-      
       PLAYER_NAME %in% c("Joel Embiid", "Nikola Jokić", "Karl-Anthony Towns", "LeBron James", 
                          "Jonas Valančiūnas", "Nikola Vučević", "Christian Wood", "Bam Adebayo", 
                          "Bobby Portis", "Rudy Gobert", "Kevin Love", "Deandre Ayton", 
