@@ -1,5 +1,5 @@
 ---
-title: "Coleta de Dados"
+title: "Configuração do Banco de Dados"
 lang: pt
 message: false
 warning: false
@@ -31,6 +31,7 @@ library(kknn) # (Kernel) K-NN
 library(finetune) # Otimização fina de hiperparâmetros
 library(gt)
 library(naivebayes)
+library(corrplot)
 
 ggplot2::theme_set(theme_minimal()) # Ajustando Tema
 
@@ -43,19 +44,59 @@ ggplot2::theme_set(theme_minimal()) # Ajustando Tema
 
 
 ```{r}
+#| eval: false
 
-dados_basicos <- nba_leaguedashplayerstats(season = "2021-22")$LeagueDashPlayerStats
+dados_basicos <- nba_leaguedashplayerstats(season = "2021-22", 
+                                           per_mode = "Per36", 
+                                           measure_type = "Base")$LeagueDashPlayerStats 
+
+# A função puxa as informações de Altura e Peso pelo PERSON_ID/PLAYER_ID de cada Jogador
+
+pegar_fisico <- function(id) {
+  tryCatch({
+    res <- nba_commonplayerinfo(player_id = id)
+    df <- res$CommonPlayerInfo %>% dplyr::select(PERSON_ID, HEIGHT, WEIGHT)
+    # Adiciona uma pausa para não sobrecarregar a API
+    Sys.sleep(0.5) 
+    return(df)
+  }, error = function(e) {
+    cat(sprintf("Erro ou dados não encontrados para o ID: %s\n", id))
+    return(NULL) # Retorna NULL para IDs sem dados
+  })
+}
+
+# Roda para todos os 605 jogadores (isso vai levar alguns minutos)
+df_todos_fisicos <- map_dfr(dados_basicos$PLAYER_ID, pegar_fisico, .progress = TRUE)
+
+# Combina os dois bancos criados pelo PLAYER_ID E PERSON_ID
+dados_basicos <- left_join(dados_basicos, df_todos_fisicos, by = c("PLAYER_ID" = "PERSON_ID"))
 
 
-dados_analise <- dados_basicos %>%
-  dplyr::select(PLAYER_NAME, TEAM_ABBREVIATION, AGE, PTS, AST, REB = REB, 
-                FG_PCT, FG3_PCT, FT_PCT, MIN) %>%
+# Função para converter altura (6-8 -> metros)
+converter_altura <- function(valor) {
+  partes <- as.numeric(unlist(strsplit(valor, "-")))
+  # (Pés * 30.48) + (Polegadas * 2.54)
+  cm <- (partes[1] * 30.48) + (partes[2] * 2.54)
+  return(cm / 100) 
+}
+
+# Função para converter peso (lbs -> kg)
+converter_peso <- function(lbs) {
+  return(lbs * 0.453592)
+}
+
+dados_basicos <- dados_basicos |>
+  rowwise() |>
+  mutate(
+    Altura = converter_altura(HEIGHT),
+    Peso = converter_peso(as.numeric(WEIGHT))
+  )
+
+
+dados_analise <- dados_basicos |>
+  dplyr::select(PLAYER_NAME, TEAM_ABBREVIATION, AGE, PTS, AST, REB, OREB, DREB, TOV, STL, 
+                BLK, FG_PCT, FG3_PCT, FT_PCT, Peso, Altura) |>
   dplyr::mutate(
-    Faixa_Etaria = case_when(
-      AGE < 25 ~ "Jovem",
-      AGE <= 30 ~ "Adulto", 
-      AGE > 30 ~ "Veterano"
-    ),
     Position = case_when(
       PLAYER_NAME %in% c("Trae Young", "Luka Dončić", "Stephen Curry", "Ja Morant", 
                          "LaMelo Ball", "Darius Garland", "Russell Westbrook", 
@@ -225,8 +266,17 @@ dados_analise <- dados_basicos %>%
     FG_PCT = as.numeric(FG_PCT),
     FG3_PCT = as.numeric(FG3_PCT),
     FT_PCT = as.numeric(FT_PCT),
-    MIN = as.numeric(MIN)
+    OREB = as.numeric(OREB),
+    DREB = as.numeric(DREB),
+    TOV = as.numeric(TOV),
+    STL = as.numeric(STL),
+    BLK = as.numeric(BLK),
+    Peso = as.numeric(Peso)
   ) 
+
+
+# Facilitar carregamentos futuros
+dados_analise |> write.csv2("includes/nba.csv", row.names = FALSE)
 
 
 # Position - Armador (PG), Ala-armador (SG), Ala (SF), Ala-pivô (PF) e Pivô (C)
@@ -238,23 +288,28 @@ dados_analise <- dados_basicos %>%
 ## Fonte dos Dados
 
 Os dados utilizados neste projeto referem-se a estatística individuais de cada jogador da NBA na Temporada 2021-2022, obtidas com bases públicas que consolidam as informações de desempenho por atleta ao longo da temporada. Vale ressaltar que a base foi retirada do pacote *hoopR* juntamente ao site
-[Basketball Reference](https://www.basketball-reference.com/leagues/NBA_2022_totals.html).
+[Basketball Reference](https://www.basketball-reference.com/leagues/NBA_2022_per_minute.html).
 
 ## Descrição das Variáveis
 
-O banco de dados possui 12 variáveis, na qual, a variável *PLAYER_NAME* e *TEAM_ABBREVIATION* não irrelevantes para o projeto. Sendo assim, as variáveis utilizadas serão:
+O banco de dados possui 17 variáveis, na qual, as variáveis *PLAYER_NAME* e *TEAM_ABBREVIATION* são irrelevantes para o projeto. Sendo assim, as variáveis utilizadas serão:
 
 | Variável | Descrição |
 |--------|----------|
 | AGE | Idade do jogador |
-| PTS | Média de pontos por jogo |
-| AST | Média de assistências por jogo |
-| REB | Média de rebotes por jogo |
-| MIN | Minutos médios em quadra |
+| PTS | Pontos por 36 minutos |
+| AST | Assistências por 36 minutos |
+| REB | Rebotes por 36 minutos |
+| OREB | Rebotes ofensivos por 36 minutos |
+| DREB | Rebotes defensivos por 36 minutos |
+| TOV | Perdas de Posse por 36 minutos |
+| STL | Roubos de bola por 36 minutos |
+| BLK | Tocos por 36 minutos |
 | FG_PCT | Percentual de arremessos convertidos |
 | FG3_PCT | Percentual de arremessos de 3 pontos |
 | FT_PCT | Percentual de lances livres |
+| Peso | Peso do jogador (KG) |
+| Altura | Altura do jogador (m) |
 | Position | Posição principal do jogador |
-| Faixa_Etaria | Classificação etária do atleta |
 
 

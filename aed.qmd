@@ -46,8 +46,7 @@ dados_analise <- dados_analise |>
     Position = as.factor(Position),
     FG_PCT = as.numeric(FG_PCT),
     FG3_PCT = as.numeric(FG3_PCT),
-    FT_PCT = as.numeric(FT_PCT),
-    MIN = as.numeric(MIN)
+    FT_PCT = as.numeric(FT_PCT)
   )
 
 ```
@@ -61,9 +60,32 @@ dados_analise <- dados_analise |>
 ```{r}
 
 dados_analise |>
-  dplyr::select(AGE, PTS, AST, REB, FG_PCT, FG3_PCT, FT_PCT, MIN) |>
-  summary()
-    
+  dplyr::select(AGE, PTS, AST, REB, OREB, DREB, TOV, STL, BLK , Peso, Altura) |> 
+  summarise(across(
+    everything(),
+    list(
+      Média   = ~mean(.x, na.rm = TRUE),
+      Mediana = ~median(.x, na.rm = TRUE),
+      SD      = ~sd(.x, na.rm = TRUE),
+      Mín     = ~min(.x, na.rm = TRUE),
+      Q1      = ~quantile(.x, 0.25, na.rm = TRUE),
+      Q3      = ~quantile(.x, 0.75, na.rm = TRUE),
+      Máx     = ~max(.x, na.rm = TRUE)
+    ),
+    .names = "{.col}_{.fn}"
+  )) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = c("Variável", "Estatística"),
+    names_sep = "_"
+  ) |>
+  pivot_wider(
+    names_from = Variável,
+    values_from = value
+  ) |>
+  kable(digits = 2, caption = "Resumo Estatístico dos Dados (per36)")
+
+
 
 ```
 
@@ -72,9 +94,9 @@ dados_analise |>
 
 ```{r}
 
-table(dados_analise$Position)
-table(dados_analise$Faixa_Etaria)
-
+table(dados_analise$Position) |>
+  kable(col.names = c("Posição", "Frequência"))
+ 
 ```
 
 ## Visualização Gráfica
@@ -135,20 +157,6 @@ ggplot(dados_analise, aes(x = AST, y = REB, color = Position)) +
 
 
 
-### Relação entre minutos e pontos
-
-
-```{r}
-
-ggplot(dados_analise, aes(x = MIN, y = PTS)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE, color = "red") +
-  labs(title = "Minutos vs Pontos",
-       x = "Minutos Jogados", y = "Pontos")
-
-```
-
-
 ### Eficiência no arremesso (FG%)
 
 ```{r}
@@ -162,24 +170,6 @@ ggplot(dados_analise, aes(x = FG_PCT)) +
 
 
 
-## Análise por Faixa Etária
-
-
-```{r}
-
-dados_analise %>%
-  group_by(Faixa_Etaria) %>%
-  summarise(
-    media_pts = mean(PTS, na.rm = TRUE),
-    media_ast = mean(AST, na.rm = TRUE),
-    media_reb = mean(REB, na.rm = TRUE),
-    n = n()
-  ) |> knitr::kable()
-
-
-```
-
-
 ## Correlação entre variáveis numéricas
 
 
@@ -188,7 +178,7 @@ dados_analise %>%
 
 
 corrplot(
-  cor(dados_analise %>% dplyr::select(PTS, AST, REB, MIN), use = "complete.obs"),
+  cor(dados_analise %>% dplyr::select(AGE, PTS, AST, REB, OREB, DREB, TOV, STL, BLK, FG_PCT, FG3_PCT, FT_PCT, Altura, Peso), use = "complete.obs"),
   method = "color",
   tl.col = "black"
 )

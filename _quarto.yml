@@ -7,11 +7,13 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Home
+        text: "Página Inicial"
       - href: coleta.qmd
-        text: Coleta
+        text: Configuração
       - href: aed.qmd
         text: AED
+      - href: modelo.qmd
+        text: Modelagem
       - about.qmd
     right:
       - icon: github

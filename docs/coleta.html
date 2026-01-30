@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Coleta de Dados</title>
+<title>Configuração do Banco de Dados</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -121,15 +121,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Home</span></a>
+<span class="menu-text">Página Inicial</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./coleta.html" aria-current="page"> 
-<span class="menu-text">Coleta</span></a>
+<span class="menu-text">Configuração</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aed.html"> 
 <span class="menu-text">AED</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./modelo.html"> 
+<span class="menu-text">Modelagem</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
@@ -174,7 +178,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Coleta de Dados</h1>
+<h1 class="title">Configuração do Banco de Dados</h1>
 </div>
 
 
@@ -216,8 +220,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finetune) <span class="co"># Otimização fina de hiperparâmetros</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naivebayes)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>()) <span class="co"># Ajustando Tema</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>()) <span class="co"># Ajustando Tema</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -226,203 +231,251 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dados_basicos <span class="ot">&lt;-</span> <span class="fu">nba_leaguedashplayerstats</span>(<span class="at">season =</span> <span class="st">"2021-22"</span>)<span class="sc">$</span>LeagueDashPlayerStats</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="ot">&lt;-</span> dados_basicos <span class="sc">%&gt;%</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(PLAYER_NAME, TEAM_ABBREVIATION, AGE, PTS, AST, <span class="at">REB =</span> REB, </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                FG_PCT, FG3_PCT, FT_PCT, MIN) <span class="sc">%&gt;%</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Faixa_Etaria =</span> <span class="fu">case_when</span>(</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      AGE <span class="sc">&lt;</span> <span class="dv">25</span> <span class="sc">~</span> <span class="st">"Jovem"</span>,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      AGE <span class="sc">&lt;=</span> <span class="dv">30</span> <span class="sc">~</span> <span class="st">"Adulto"</span>, </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      AGE <span class="sc">&gt;</span> <span class="dv">30</span> <span class="sc">~</span> <span class="st">"Veterano"</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">Position =</span> <span class="fu">case_when</span>(</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Trae Young"</span>, <span class="st">"Luka Dončić"</span>, <span class="st">"Stephen Curry"</span>, <span class="st">"Ja Morant"</span>, </span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"LaMelo Ball"</span>, <span class="st">"Darius Garland"</span>, <span class="st">"Russell Westbrook"</span>, </span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dejounte Murray"</span>, <span class="st">"James Harden"</span>, <span class="st">"Shai Gilgeous-Alexander"</span>, </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"CJ McCollum"</span>, <span class="st">"De'Aaron Fox"</span>, <span class="st">"Fred VanVleet"</span>, </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Tyrese Maxey"</span>, <span class="st">"Jrue Holiday"</span>, <span class="st">"Tyrese Haliburton"</span>, </span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"D'Angelo Russell"</span>, <span class="st">"Cole Anthony"</span>, <span class="st">"Mike Conley"</span>, <span class="st">"Chris Paul"</span>, </span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kevin Porter Jr."</span>, <span class="st">"Monte Morris"</span>, <span class="st">"Spencer Dinwiddie"</span>, </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Devonte' Graham"</span>, <span class="st">"Immanuel Quickley"</span>, <span class="st">"Dennis Schröder"</span>, </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Davion Mitchell"</span>, <span class="st">"Marcus Smart"</span>, <span class="st">"Kyle Lowry"</span>, <span class="st">"Kyrie Irving"</span>, </span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Coby White"</span>, <span class="st">"Damian Lillard"</span>, <span class="st">"Malcolm Brogdon"</span>, <span class="st">"Tyus Jones"</span>,</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cameron Payne"</span>, <span class="st">"Tre Mann"</span>, <span class="st">"Gabe Vincent"</span>, <span class="st">"Jalen Suggs"</span>, </span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Frank Jackson"</span>, <span class="st">"Eric Bledsoe"</span>, <span class="st">"Patrick Beverley"</span>, </span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Raul Neto"</span>, <span class="st">"Cory Joseph"</span>, <span class="st">"Duane Washington Jr."</span>, </span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Lonzo Ball"</span>, <span class="st">"Killian Hayes"</span>, <span class="st">"Ricky Rubio"</span>, <span class="st">"Payton Pritchard"</span>, </span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kemba Walker"</span>, <span class="st">"Tre Jones"</span>, <span class="st">"Ish Smith"</span>, <span class="st">"Aaron Holiday"</span>, </span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Theo Maledon"</span>, <span class="st">"Lou Williams"</span>, <span class="st">"George Hill"</span>, <span class="st">"Facundo Campazzo"</span>, </span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jose Alvarado"</span>, <span class="st">"Derrick Rose"</span>, <span class="st">"Brandon Williams"</span>, <span class="st">"D.J. Augustin"</span>, </span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jevon Carter"</span>, <span class="st">"Jordan McLaughlin"</span>, <span class="st">"T.J. McConnell"</span>, <span class="st">"Trey Burke"</span>, </span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Saben Lee"</span>, <span class="st">"Dennis Smith Jr."</span>, <span class="st">"Dalano Banton"</span>, <span class="st">"Trent Forrest"</span>, </span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Markelle Fultz"</span>, <span class="st">"Malachi Flynn"</span>, <span class="st">"Rajon Rondo"</span>, <span class="st">"Isaiah Thomas"</span>, </span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Keifer Sykes"</span>, <span class="st">"Brandon Goodwin"</span>, <span class="st">"Goran Dragic"</span>, <span class="st">"Elfrid Payton"</span>, </span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kira Lewis Jr."</span>, <span class="st">"Kris Dunn"</span>, <span class="st">"David Duke Jr."</span>, <span class="st">"Miles McBride"</span>, </span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Brad Wanamaker"</span>, <span class="st">"Lindell Wigginton"</span>, <span class="st">"Justin Robinson"</span>, </span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Mychal Mulder"</span>, <span class="st">"Chris Chiozza"</span>, <span class="st">"Javonte Smart"</span>, </span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Devin Cannady"</span>, <span class="st">"Hassani Gravett"</span>, <span class="st">"Zavier Simpson"</span>,</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kevin Pangos"</span>, <span class="st">"Tim Frazier"</span>, <span class="st">"Jared Harper"</span>, </span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Brandon Knight"</span>, <span class="st">"Devon Dotson"</span>, <span class="st">"Derrick Walton Jr."</span>, </span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jeff Dowtin Jr."</span>, <span class="st">"Tyler Johnson"</span>, <span class="st">"Ryan Arcidiacono"</span>, </span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cassius Winston"</span>, <span class="st">"Myles Powell"</span>, <span class="st">"Tremont Waters"</span>, </span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Malik Newman"</span>, <span class="st">"Sharife Cooper"</span>, <span class="st">"McKinley Wright IV"</span>, </span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Darren Collison"</span>, <span class="st">"Carlik Jones"</span>, <span class="st">"Emmanuel Mudiay"</span>, <span class="st">"Tyrell Terry"</span>, </span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cat Barber"</span>, <span class="st">"JaQuori McLaughlin"</span>, <span class="st">"Jaysean Paige"</span>) <span class="sc">~</span> <span class="st">"PG"</span>,</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Joel Embiid"</span>, <span class="st">"Nikola Jokić"</span>, <span class="st">"Karl-Anthony Towns"</span>, <span class="st">"LeBron James"</span>, </span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jonas Valančiūnas"</span>, <span class="st">"Nikola Vučević"</span>, <span class="st">"Christian Wood"</span>, <span class="st">"Bam Adebayo"</span>, </span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Bobby Portis"</span>, <span class="st">"Rudy Gobert"</span>, <span class="st">"Kevin Love"</span>, <span class="st">"Deandre Ayton"</span>, </span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Montrezl Harrell"</span>, <span class="st">"Anthony Davis"</span>, <span class="st">"Jakob Poeltl"</span>, <span class="st">"Jarrett Allen"</span>, </span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jusuf Nurkić"</span>, <span class="st">"Clint Capela"</span>, <span class="st">"Ivica Zubac"</span>, <span class="st">"Mo Bamba"</span>, </span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dwight Powell"</span>, <span class="st">"Al Horford"</span>, <span class="st">"Alperen Sengun"</span>, <span class="st">"JaVale McGee"</span>, </span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Daniel Gafford"</span>, <span class="st">"P.J. Washington"</span>, <span class="st">"Precious Achiuwa"</span>, <span class="st">"Jaxson Hayes"</span>, </span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Naz Reid"</span>, <span class="st">"Mitchell Robinson"</span>, <span class="st">"LaMarcus Aldridge"</span>, <span class="st">"Robert Williams III"</span>,   </span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Isaiah Stewart"</span>, <span class="st">"Andre Drummond"</span>, <span class="st">"Moritz Wagner"</span>, <span class="st">"Isaiah Hartenstein"</span>, </span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Drew Eubanks"</span>, <span class="st">"Myles Turner"</span>, <span class="st">"Chimezie Metu"</span>, <span class="st">"Hassan Whiteside"</span>, </span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Steven Adams"</span>, <span class="st">"Kevon Looney"</span>, <span class="st">"Mason Plumlee"</span>, <span class="st">"Richaun Holmes"</span>, </span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Damian Jones"</span>, <span class="st">"Willy Hernangomez"</span>, <span class="st">"Nemanja Bjelica"</span>, <span class="st">"DeMarcus Cousins"</span>, </span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dewayne Dedmon"</span>, <span class="st">"Nic Claxton"</span>, <span class="st">"Onyeka Okongwu"</span>, <span class="st">"Daniel Theis"</span>, </span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dwight Howard"</span>, <span class="st">"Jeremiah Robinson-Earl"</span>, <span class="st">"Kelly Olynyk"</span>, <span class="st">"Serge Ibaka"</span>, </span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Blake Griffin"</span>, <span class="st">"Goga Bitadze"</span>, <span class="st">"Mike Muscala"</span>, <span class="st">"Tristan Thompson"</span>, </span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Omer Yurtseven"</span>, <span class="st">"Isaiah Jackson"</span>, <span class="st">"Jock Landale"</span>, <span class="st">"Robin Lopez"</span>, </span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Khem Birch"</span>, <span class="st">"Alex Len"</span>, <span class="st">"Taj Gibson"</span>, <span class="st">"Zach Collins"</span>, </span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Bismack Biyombo"</span>, <span class="st">"Derrick Favors"</span>, <span class="st">"DeAndre Jordan"</span>, <span class="st">"Thomas Bryant"</span>, </span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Luka Garza"</span>, <span class="st">"Moses Brown"</span>, <span class="st">"Tony Bradley"</span>, <span class="st">"Brook Lopez"</span>, </span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Gorgui Dieng"</span>, <span class="st">"Olivier Sarr"</span>, <span class="st">"Nick Richards"</span>, <span class="st">"Cody Zeller"</span>, </span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Enes Freedom"</span>, <span class="st">"Killian Tillie"</span>, <span class="st">"Paul Reed"</span>, <span class="st">"Paul Millsap"</span>, </span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Boban Marjanovic"</span>, <span class="st">"Frank Kaminsky"</span>, <span class="st">"Bruno Fernando"</span>, <span class="st">"Nerlens Noel"</span>, </span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Udoka Azubuike"</span>, <span class="st">"Greg Monroe"</span>, <span class="st">"Charles Bassey"</span>, <span class="st">"Neemias Queta"</span>, </span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Willie Cauley-Stein"</span>, <span class="st">"Udonis Haslem"</span>, <span class="st">"Luke Kornet"</span>, <span class="st">"Ed Davis"</span>, </span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kai Jones"</span>, <span class="st">"Vernon Carey Jr."</span>, <span class="st">"Marko Simonovic"</span>, <span class="st">"Tacko Fall"</span>, </span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Micah Potter"</span>, <span class="st">"Cheick Diallo"</span>, <span class="st">"Daniel Oturu"</span>, <span class="st">"Norvel Pelle"</span>, </span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jordan Bell"</span>, <span class="st">"Javin DeLaurier"</span>, <span class="st">"Jaime Echenique"</span>, <span class="st">"Jay Huff"</span>, </span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jon Teske"</span>) <span class="sc">~</span> <span class="st">"C"</span>,</span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"DeMar DeRozan"</span>, <span class="st">"Giannis Antetokounmpo"</span>, <span class="st">"Kevin Durant"</span>, <span class="st">"Miles Bridges"</span>, </span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Pascal Siakam"</span>, <span class="st">"Julius Randle"</span>, <span class="st">"Jaren Jackson Jr."</span>, <span class="st">"Harrison Barnes"</span>, </span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Tobias Harris"</span>, <span class="st">"Bojan Bogdanovic"</span>, <span class="st">"Domantas Sabonis"</span>, <span class="st">"Scottie Barnes"</span>, </span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kyle Kuzma"</span>, <span class="st">"Aaron Gordon"</span>, <span class="st">"Evan Mobley"</span>, <span class="st">"Kristaps Porziņģis"</span>, </span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Wendell Carter Jr."</span>, <span class="st">"Carmelo Anthony"</span>, <span class="st">"Jae'Sean Tate"</span>, <span class="st">"Jerami Grant"</span>, </span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dorian Finney-Smith"</span>, <span class="st">"John Collins"</span>, <span class="st">"Marcus Morris Sr."</span>, <span class="st">"Cameron Johnson"</span>, </span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Trey Lyles"</span>, <span class="st">"Jeff Green"</span>, <span class="st">"Danilo Gallinari"</span>, <span class="st">"Paul George"</span>, </span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Darius Bazley"</span>, <span class="st">"Herbert Jones"</span>, <span class="st">"Georges Niang"</span>, <span class="st">"Brandon Clarke"</span>, </span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Obi Toppin"</span>, <span class="st">"Jaden McDaniels"</span>, <span class="st">"Jae Crowder"</span>, <span class="st">"Chuma Okeke"</span>, </span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Robert Covington"</span>, <span class="st">"Grant Williams"</span>, <span class="st">"Doug McDermott"</span>, <span class="st">"Marvin Bagley III"</span>, </span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"P.J. Tucker"</span>, <span class="st">"Kyle Anderson"</span>, <span class="st">"Otto Porter Jr."</span>, <span class="st">"Jarred Vanderbilt"</span>, </span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Taurean Prince"</span>, <span class="st">"Nicolas Batum"</span>, <span class="st">"Rui Hachimura"</span>, <span class="st">"Jalen Smith"</span>, </span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Aleksej Pokusevski"</span>, <span class="st">"Isaiah Roby"</span>, <span class="st">"Rudy Gay"</span>, <span class="st">"JaMychal Green"</span>, </span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Maxi Kleber"</span>, <span class="st">"Lamar Stevens"</span>, <span class="st">"Draymond Green"</span>, <span class="st">"James Johnson"</span>, </span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Eric Paschall"</span>, <span class="st">"Thaddeus Young"</span>, <span class="st">"Larry Nance Jr."</span>, <span class="st">"Stanley Johnson"</span>, </span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Terry Taylor"</span>, <span class="st">"Davis Bertans"</span>, <span class="st">"Derrick Jones Jr."</span>, <span class="st">"Justise Winslow"</span>, </span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Zeke Nnaji"</span>, <span class="st">"Dean Wade"</span>, <span class="st">"Xavier Tillman"</span>, <span class="st">"Day'Ron Sharpe"</span>, </span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Anthony Gill"</span>, <span class="st">"Marquese Chriss"</span>, <span class="st">"Sandro Mamukelashvili"</span>, <span class="st">"Patrick Williams"</span>, </span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Wenyen Gabriel"</span>, <span class="st">"Nathan Knight"</span>, <span class="st">"Santi Aldama"</span>, <span class="st">"Juancho Hernangomez"</span>, </span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Markieff Morris"</span>, <span class="st">"Ish Wainright"</span>, <span class="st">"Gary Clark"</span>, <span class="st">"Semi Ojeleye"</span>, </span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Reggie Perry"</span>, <span class="st">"Jericho Sims"</span>, <span class="st">"KZ Okpala"</span>, <span class="st">"Tyler Cook"</span>, </span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"JT Thor"</span>, <span class="st">"Vlatko Čančar"</span>, <span class="st">"Mamadi Diakite"</span>, <span class="st">"Jabari Parker"</span>, </span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jalen Johnson"</span>, <span class="st">"Jamorko Pickett"</span>, <span class="st">"Usman Garuba"</span>, <span class="st">"Devontae Cacok"</span>, </span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Alize Johnson"</span>,  <span class="st">"Bol Bol"</span>, <span class="st">"D.J. Wilson"</span>, <span class="st">"Chris Silva"</span>, </span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Freddie Gillespie"</span>, <span class="st">"Malik Fitts"</span>, <span class="st">"Isaiah Todd"</span>, <span class="st">"Gabriel Deck"</span>, </span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Petr Cornelie"</span>, <span class="st">"Sekou Doumbouya"</span>, <span class="st">"Juwan Morgan"</span>, <span class="st">"Moses Wright"</span>, </span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Sam Dekker"</span>, <span class="st">"Emanuel Terry"</span>) <span class="sc">~</span> <span class="st">"PF"</span>,</span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Jayson Tatum"</span>, <span class="st">"Jaylen Brown"</span>, <span class="st">"RJ Barrett"</span>, <span class="st">"Khris Middleton"</span>, </span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Saddiq Bey"</span>, <span class="st">"Keldon Johnson"</span>, <span class="st">"Andrew Wiggins"</span>, <span class="st">"Brandon Ingram"</span>, </span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jimmy Butler III"</span>, <span class="st">"Franz Wagner"</span>, <span class="st">"Mikal Bridges"</span>, <span class="st">"Kelly Oubre Jr."</span>, </span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Lauri Markkanen"</span>, <span class="st">"Kevin Huerter"</span>, <span class="st">"Terance Mann"</span>, <span class="st">"Devin Vassell"</span>, </span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Norman Powell"</span>, <span class="st">"OG Anunoby"</span>, <span class="st">"Gordon Hayward"</span>, <span class="st">"Chris Boucher"</span>, </span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Justin Holiday"</span>, <span class="st">"Max Strus"</span>, <span class="st">"De'Andre Hunter"</span>, <span class="st">"Cedi Osman"</span>, </span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"KJ Martin"</span>, <span class="st">"Deni Avdija"</span>, <span class="st">"Josh Giddey"</span>, <span class="st">"Jonathan Kuminga"</span>, </span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Bruce Brown"</span>, <span class="st">"Pat Connaughton"</span>, <span class="st">"Corey Kispert"</span>, <span class="st">"Oshae Brissett"</span>, </span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dillon Brooks"</span>, <span class="st">"Isaac Okoro"</span>, <span class="st">"Reggie Bullock Jr."</span>, <span class="st">"Royce O'Neale"</span>, </span>
-<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Caleb Martin"</span>, <span class="st">"Cody Martin"</span>, <span class="st">"Torrey Craig"</span>, <span class="st">"Ziaire Williams"</span>, </span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cam Reddish"</span>, <span class="st">"Jordan Nwora"</span>, <span class="st">"Javonte Green"</span>, <span class="st">"Nassir Little"</span>, </span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jeremy Lamb"</span>, <span class="st">"Danny Green"</span>, <span class="st">"Trendon Watford"</span>, <span class="st">"Kenrich Williams"</span>, </span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jalen McDaniels"</span>, <span class="st">"CJ Elleby"</span>, <span class="st">"Keita Bates-Diop"</span>, <span class="st">"Trey Murphy III"</span>, </span>
-<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Josh Jackson"</span>, <span class="st">"Joe Ingles"</span>, <span class="st">"Naji Marshall"</span>, <span class="st">"Juan Toscano-Anderson"</span>, </span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Joshua Primo"</span>, <span class="st">"Kessler Edwards"</span>, <span class="st">"DeAndre' Bembry"</span>, <span class="st">"Troy Brown Jr."</span>, </span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Svi Mykhailiuk"</span>, <span class="st">"Danuel House Jr."</span>, <span class="st">"David Nwaba"</span>, <span class="st">"Timothe Luwawu-Cabarrot"</span>, </span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Greg Brown III"</span>, <span class="st">"Maurice Harkless"</span>, <span class="st">"Ignas Brazdeikis"</span>, <span class="st">"Aaron Nesmith"</span>, </span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Thanasis Antetokounmpo"</span>, <span class="st">"Kelan Martin"</span>, <span class="st">"Yuta Watanabe"</span>, <span class="st">"Rodney Hood"</span>, </span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Joe Harris"</span>, <span class="st">"Admiral Schofield"</span>, <span class="st">"Kent Bazemore"</span>, <span class="st">"Andre Iguodala"</span>, </span>
-<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Isaiah Livers"</span>, <span class="st">"Dylan Windler"</span>, <span class="st">"Jaylen Hoard"</span>, <span class="st">"Justin Anderson"</span>, </span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Trevor Ariza"</span>, <span class="st">"Keljin Blevins"</span>, <span class="st">"Kevin Knox II"</span>, <span class="st">"Michael Porter Jr."</span>, </span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Georgios Kalaitzakis"</span>, <span class="st">"Justin Champagnie"</span>, <span class="st">"Jake Layman"</span>, <span class="st">"Braxton Key"</span>, </span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Sam Hauser"</span>, <span class="st">"Alfonzo McKinnie"</span>, <span class="st">"Leandro Bolmaro"</span>, <span class="st">"Theo Pinson"</span>, </span>
-<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Louis King"</span>, <span class="st">"Haywood Highsmith"</span>, <span class="st">"Didi Louzada"</span>, <span class="st">"Abdel Nader"</span>, </span>
-<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Paul Watson"</span>, <span class="st">"Chaundee Brown Jr."</span>, <span class="st">"James Ennis III"</span>, <span class="st">"BJ Johnson"</span>, </span>
-<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cameron Oliver"</span>, <span class="st">"Wes Iwundu"</span>, <span class="st">"Justin Jackson"</span>, <span class="st">"Aleem Ford"</span>, </span>
-<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cameron McGriff"</span>, <span class="st">"Yves Pons"</span>, <span class="st">"Isaac Bonga"</span>, <span class="st">"Solomon Hill"</span>, </span>
-<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Eugene Omoruyi"</span>, <span class="st">"Robert Woodard II"</span>, <span class="st">"Paris Bass"</span>, <span class="st">"Trevon Scott"</span>, </span>
-<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Xavier Sneed"</span>, <span class="st">"Chandler Hutchison"</span>, <span class="st">"Jemerrio Jones"</span>, <span class="st">"Matt Ryan"</span>, </span>
-<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Aaron Henry"</span>, <span class="st">"George King"</span>, <span class="st">"Zylan Cheatham"</span>, <span class="st">"Feron Hunt"</span>, </span>
-<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Arnoldas Kulboka"</span>, <span class="st">"Anthony Lamb"</span>) <span class="sc">~</span> <span class="st">"SF"</span>,</span>
-<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Devin Booker"</span>,<span class="st">"Donovan Mitchell"</span>, <span class="st">"Zach LaVine"</span>, <span class="st">"Anthony Edwards"</span>, </span>
-<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Terry Rozier"</span>, <span class="st">"Jordan Poole"</span>, <span class="st">"Desmond Bane"</span>, <span class="st">"Tyler Herro"</span>, </span>
-<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jalen Brunson"</span>, <span class="st">"Gary Trent Jr."</span>, <span class="st">"Jordan Clarkson"</span>, <span class="st">"Buddy Hield"</span>, </span>
-<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Reggie Jackson"</span>, <span class="st">"Jalen Green"</span>, <span class="st">"Evan Fournier"</span>, <span class="st">"Cade Cunningham"</span>, </span>
-<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Malik Monk"</span>, <span class="st">"Will Barton"</span>, <span class="st">"Kentavious Caldwell-Pope"</span>, <span class="st">"Derrick White"</span>, </span>
-<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Anfernee Simons"</span>, <span class="st">"Caris LeVert"</span>, <span class="st">"Seth Curry"</span>, <span class="st">"Malik Beasley"</span>, </span>
-<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Bogdan Bogdanović"</span>, <span class="st">"Alec Burks"</span>, <span class="st">"Bradley Beal"</span>, <span class="st">"Patty Mills"</span>, </span>
-<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Luguentz Dort"</span>, <span class="st">"Duncan Robinson"</span>, <span class="st">"Lonnie Walker IV"</span>, <span class="st">"Luke Kennard"</span>, </span>
-<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Josh Hart"</span>, <span class="st">"De'Anthony Melton"</span>, <span class="st">"Eric Gordon"</span>, <span class="st">"Grayson Allen"</span>, </span>
-<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Chris Duarte"</span>, <span class="st">"Bones Hyland"</span>, <span class="st">"Nickeil Alexander-Walker"</span>, <span class="st">"Ayo Dosunmu"</span>, </span>
-<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Gary Harris"</span>, <span class="st">"Josh Richardson"</span>, <span class="st">"Bryn Forbes"</span>, <span class="st">"Ben McLemore"</span>, </span>
-<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Klay Thompson"</span>, <span class="st">"Garrison Mathews"</span>, <span class="st">"Hamidou Diallo"</span>, <span class="st">"Terrence Ross"</span>, </span>
-<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Amir Coffey"</span>, <span class="st">"Tim Hardaway Jr."</span>, <span class="st">"Talen Horton-Tucker"</span>, <span class="st">"Josh Christopher"</span>, </span>
-<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Landry Shamet"</span>, <span class="st">"Cam Thomas"</span>, <span class="st">"Jaylen Nowell"</span>, <span class="st">"Furkan Korkmaz"</span>, </span>
-<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Gary Payton II"</span>, <span class="st">"R.J. Hampton"</span>, <span class="st">"Damion Lee"</span>, <span class="st">"Shake Milton"</span>, </span>
-<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Austin Reaves"</span>, <span class="st">"Aaron Wiggins"</span>, <span class="st">"Austin Rivers"</span>, <span class="st">"Avery Bradley"</span>, </span>
-<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Lance Stephenson"</span>, <span class="st">"Donte DiVincenzo"</span>, <span class="st">"Matisse Thybulle"</span>, <span class="st">"John Konchar"</span>, </span>
-<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Brandon Boston"</span>, <span class="st">"Delon Wright"</span>, <span class="st">"Ty Jerome"</span>, <span class="st">"Josh Green"</span>, </span>
-<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Terence Davis"</span>, <span class="st">"Garrett Temple"</span>, <span class="st">"Alex Caruso"</span>, <span class="st">"Armoni Brooks"</span>, </span>
-<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Wayne Ellington"</span>, <span class="st">"Quentin Grimes"</span>, <span class="st">"Rodney McGruder"</span>, <span class="st">"Keon Johnson"</span>, </span>
-<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Wesley Matthews"</span>, <span class="st">"Frank Ntilikina"</span>, <span class="st">"Moses Moody"</span>, <span class="st">"Romeo Langford"</span>, </span>
-<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Davon Reed"</span>, <span class="st">"Lindy Waters III"</span>, <span class="st">"Isaiah Joe"</span>, <span class="st">"Tomas Satoransky"</span>, </span>
-<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Vít Krejčí"</span>, <span class="st">"Tony Snell"</span>, <span class="st">"Collin Sexton"</span>, <span class="st">"Jared Butler"</span>, </span>
-<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Matt Thomas"</span>, <span class="st">"Sterling Brown"</span>, <span class="st">"James Bouknight"</span>, <span class="st">"Josh Okogie"</span>, </span>
-<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jarrett Culver"</span>, <span class="st">"Markus Howard"</span>, <span class="st">"Elijah Hughes"</span>, <span class="st">"Victor Oladipo"</span>, </span>
-<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"PJ Dozier"</span>, <span class="st">"Skylar Mays"</span>, <span class="st">"Daishen Nix"</span>, <span class="st">"Kyle Guy"</span>, </span>
-<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Malcolm Hill"</span>, <span class="st">"Denzel Valentine"</span>, <span class="st">"Joe Wieskamp"</span>, <span class="st">"Jahmi'us Ramsey"</span>, </span>
-<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Xavier Moon"</span>, <span class="st">"Cassius Stanley"</span>, <span class="st">"Jay Scrubb"</span>, <span class="st">"Trevelin Queen"</span>, </span>
-<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Melvin Frazier Jr."</span>, <span class="st">"Quinndary Weatherspoon"</span>, <span class="st">"Charlie Brown Jr."</span>, </span>
-<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Mason Jones"</span>, <span class="st">"Sam Merrill"</span>, <span class="st">"Carsen Edwards"</span>, <span class="st">"Brodric Thomas"</span>,</span>
-<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Rayjon Tucker"</span>, <span class="st">"Nik Stauskas"</span>, <span class="st">"Tyrone Wallace"</span>, <span class="st">"Ruben Nembhard Jr."</span>, </span>
-<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Langston Galloway"</span>, <span class="st">"Marcus Garrett"</span>, <span class="st">"Gabriel Lundberg"</span>, <span class="st">"Gabe York"</span>, </span>
-<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Mac McClung"</span>, <span class="st">"Dakota Mathias"</span>, <span class="st">"Craig Sword"</span>, <span class="st">"Miye Oni"</span>,</span>
-<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jordan Schakel"</span>, <span class="st">"Wayne Selden"</span>, <span class="st">"Damyean Dotson"</span>, <span class="st">"Shaquille Harrison"</span>, </span>
-<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Scotty Hopson"</span>, <span class="st">"Rob Edwards"</span>, <span class="st">"Deividas Sirvydis"</span>, <span class="st">"Joel Ayayi"</span>, </span>
-<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Shaq Buchanan"</span>, <span class="st">"Ahmad Caver"</span>, <span class="st">"Jarron Cumberland"</span>, <span class="st">"DaQuan Jeffries"</span>,</span>
-<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Joe Johnson"</span>, <span class="st">"Jaylen Morris"</span>, <span class="st">"Jaden Springer"</span>, <span class="st">"Scottie Lewis"</span>, </span>
-<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jordan Goodwin"</span>, <span class="st">"Tyler Hall"</span>, <span class="st">"Nate Hinton"</span>, <span class="st">"DeJon Jarreau"</span>, </span>
-<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"David Johnson"</span>, <span class="st">"CJ Miles"</span>, <span class="st">"Matt Mooney"</span>, <span class="st">"Ade Murkey"</span>, <span class="st">"Trayvon Palmer"</span>, </span>
-<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"MJ Walker"</span>) <span class="sc">~</span> <span class="st">"SG"</span>,</span>
-<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"To_Map"</span> </span>
-<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>    <span class="at">PTS =</span> <span class="fu">as.numeric</span>(PTS),</span>
-<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>    <span class="at">AGE =</span> <span class="fu">as.numeric</span>(AGE),</span>
-<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>    <span class="at">AST =</span> <span class="fu">as.numeric</span>(AST),</span>
-<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>    <span class="at">REB =</span> <span class="fu">as.numeric</span>(REB),</span>
-<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>    <span class="at">Position =</span> <span class="fu">as.factor</span>(Position),</span>
-<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>    <span class="at">FG_PCT =</span> <span class="fu">as.numeric</span>(FG_PCT),</span>
-<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>    <span class="at">FG3_PCT =</span> <span class="fu">as.numeric</span>(FG3_PCT),</span>
-<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>    <span class="at">FT_PCT =</span> <span class="fu">as.numeric</span>(FT_PCT),</span>
-<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>    <span class="at">MIN =</span> <span class="fu">as.numeric</span>(MIN)</span>
-<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>  ) </span>
-<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a><span class="co"># Position - Armador (PG), Ala-armador (SG), Ala (SF), Ala-pivô (PF) e Pivô (C)</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dados_basicos <span class="ot">&lt;-</span> <span class="fu">nba_leaguedashplayerstats</span>(<span class="at">season =</span> <span class="st">"2021-22"</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">per_mode =</span> <span class="st">"Per36"</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">measure_type =</span> <span class="st">"Base"</span>)<span class="sc">$</span>LeagueDashPlayerStats </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># A função puxa as informações de Altura e Peso pelo PERSON_ID/PLAYER_ID de cada Jogador</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>pegar_fisico <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>({</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">nba_commonplayerinfo</span>(<span class="at">player_id =</span> id)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> res<span class="sc">$</span>CommonPlayerInfo <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(PERSON_ID, HEIGHT, WEIGHT)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Adiciona uma pausa para não sobrecarregar a API</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Sys.sleep</span>(<span class="fl">0.5</span>) </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(df)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Erro ou dados não encontrados para o ID: %s</span><span class="sc">\n</span><span class="st">"</span>, id))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>) <span class="co"># Retorna NULL para IDs sem dados</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Roda para todos os 605 jogadores (isso vai levar alguns minutos)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>df_todos_fisicos <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(dados_basicos<span class="sc">$</span>PLAYER_ID, pegar_fisico, <span class="at">.progress =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Combina os dois bancos criados pelo PLAYER_ID E PERSON_ID</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>dados_basicos <span class="ot">&lt;-</span> <span class="fu">left_join</span>(dados_basicos, df_todos_fisicos, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"PLAYER_ID"</span> <span class="ot">=</span> <span class="st">"PERSON_ID"</span>))</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Função para converter altura (6-8 -&gt; metros)</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>converter_altura <span class="ot">&lt;-</span> <span class="cf">function</span>(valor) {</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  partes <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(valor, <span class="st">"-"</span>)))</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (Pés * 30.48) + (Polegadas * 2.54)</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  cm <span class="ot">&lt;-</span> (partes[<span class="dv">1</span>] <span class="sc">*</span> <span class="fl">30.48</span>) <span class="sc">+</span> (partes[<span class="dv">2</span>] <span class="sc">*</span> <span class="fl">2.54</span>)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(cm <span class="sc">/</span> <span class="dv">100</span>) </span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Função para converter peso (lbs -&gt; kg)</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>converter_peso <span class="ot">&lt;-</span> <span class="cf">function</span>(lbs) {</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(lbs <span class="sc">*</span> <span class="fl">0.453592</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>dados_basicos <span class="ot">&lt;-</span> dados_basicos <span class="sc">|&gt;</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">Altura =</span> <span class="fu">converter_altura</span>(HEIGHT),</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">Peso =</span> <span class="fu">converter_peso</span>(<span class="fu">as.numeric</span>(WEIGHT))</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="ot">&lt;-</span> dados_basicos <span class="sc">|&gt;</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(PLAYER_NAME, TEAM_ABBREVIATION, AGE, PTS, AST, REB, OREB, DREB, TOV, STL, </span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                BLK, FG_PCT, FG3_PCT, FT_PCT, Peso, Altura) <span class="sc">|&gt;</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">Position =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Trae Young"</span>, <span class="st">"Luka Dončić"</span>, <span class="st">"Stephen Curry"</span>, <span class="st">"Ja Morant"</span>, </span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"LaMelo Ball"</span>, <span class="st">"Darius Garland"</span>, <span class="st">"Russell Westbrook"</span>, </span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dejounte Murray"</span>, <span class="st">"James Harden"</span>, <span class="st">"Shai Gilgeous-Alexander"</span>, </span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"CJ McCollum"</span>, <span class="st">"De'Aaron Fox"</span>, <span class="st">"Fred VanVleet"</span>, </span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Tyrese Maxey"</span>, <span class="st">"Jrue Holiday"</span>, <span class="st">"Tyrese Haliburton"</span>, </span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"D'Angelo Russell"</span>, <span class="st">"Cole Anthony"</span>, <span class="st">"Mike Conley"</span>, <span class="st">"Chris Paul"</span>, </span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kevin Porter Jr."</span>, <span class="st">"Monte Morris"</span>, <span class="st">"Spencer Dinwiddie"</span>, </span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Devonte' Graham"</span>, <span class="st">"Immanuel Quickley"</span>, <span class="st">"Dennis Schröder"</span>, </span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Davion Mitchell"</span>, <span class="st">"Marcus Smart"</span>, <span class="st">"Kyle Lowry"</span>, <span class="st">"Kyrie Irving"</span>, </span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Coby White"</span>, <span class="st">"Damian Lillard"</span>, <span class="st">"Malcolm Brogdon"</span>, <span class="st">"Tyus Jones"</span>,</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cameron Payne"</span>, <span class="st">"Tre Mann"</span>, <span class="st">"Gabe Vincent"</span>, <span class="st">"Jalen Suggs"</span>, </span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Frank Jackson"</span>, <span class="st">"Eric Bledsoe"</span>, <span class="st">"Patrick Beverley"</span>, </span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Raul Neto"</span>, <span class="st">"Cory Joseph"</span>, <span class="st">"Duane Washington Jr."</span>, </span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Lonzo Ball"</span>, <span class="st">"Killian Hayes"</span>, <span class="st">"Ricky Rubio"</span>, <span class="st">"Payton Pritchard"</span>, </span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kemba Walker"</span>, <span class="st">"Tre Jones"</span>, <span class="st">"Ish Smith"</span>, <span class="st">"Aaron Holiday"</span>, </span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Theo Maledon"</span>, <span class="st">"Lou Williams"</span>, <span class="st">"George Hill"</span>, <span class="st">"Facundo Campazzo"</span>, </span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jose Alvarado"</span>, <span class="st">"Derrick Rose"</span>, <span class="st">"Brandon Williams"</span>, <span class="st">"D.J. Augustin"</span>, </span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jevon Carter"</span>, <span class="st">"Jordan McLaughlin"</span>, <span class="st">"T.J. McConnell"</span>, <span class="st">"Trey Burke"</span>, </span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Saben Lee"</span>, <span class="st">"Dennis Smith Jr."</span>, <span class="st">"Dalano Banton"</span>, <span class="st">"Trent Forrest"</span>, </span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Markelle Fultz"</span>, <span class="st">"Malachi Flynn"</span>, <span class="st">"Rajon Rondo"</span>, <span class="st">"Isaiah Thomas"</span>, </span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Keifer Sykes"</span>, <span class="st">"Brandon Goodwin"</span>, <span class="st">"Goran Dragic"</span>, <span class="st">"Elfrid Payton"</span>, </span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kira Lewis Jr."</span>, <span class="st">"Kris Dunn"</span>, <span class="st">"David Duke Jr."</span>, <span class="st">"Miles McBride"</span>, </span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Brad Wanamaker"</span>, <span class="st">"Lindell Wigginton"</span>, <span class="st">"Justin Robinson"</span>, </span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Mychal Mulder"</span>, <span class="st">"Chris Chiozza"</span>, <span class="st">"Javonte Smart"</span>, </span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Devin Cannady"</span>, <span class="st">"Hassani Gravett"</span>, <span class="st">"Zavier Simpson"</span>,</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kevin Pangos"</span>, <span class="st">"Tim Frazier"</span>, <span class="st">"Jared Harper"</span>, </span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Brandon Knight"</span>, <span class="st">"Devon Dotson"</span>, <span class="st">"Derrick Walton Jr."</span>, </span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jeff Dowtin Jr."</span>, <span class="st">"Tyler Johnson"</span>, <span class="st">"Ryan Arcidiacono"</span>, </span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cassius Winston"</span>, <span class="st">"Myles Powell"</span>, <span class="st">"Tremont Waters"</span>, </span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Malik Newman"</span>, <span class="st">"Sharife Cooper"</span>, <span class="st">"McKinley Wright IV"</span>, </span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Darren Collison"</span>, <span class="st">"Carlik Jones"</span>, <span class="st">"Emmanuel Mudiay"</span>, <span class="st">"Tyrell Terry"</span>, </span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cat Barber"</span>, <span class="st">"JaQuori McLaughlin"</span>, <span class="st">"Jaysean Paige"</span>) <span class="sc">~</span> <span class="st">"PG"</span>,</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Joel Embiid"</span>, <span class="st">"Nikola Jokić"</span>, <span class="st">"Karl-Anthony Towns"</span>, <span class="st">"LeBron James"</span>, </span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jonas Valančiūnas"</span>, <span class="st">"Nikola Vučević"</span>, <span class="st">"Christian Wood"</span>, <span class="st">"Bam Adebayo"</span>, </span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Bobby Portis"</span>, <span class="st">"Rudy Gobert"</span>, <span class="st">"Kevin Love"</span>, <span class="st">"Deandre Ayton"</span>, </span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Montrezl Harrell"</span>, <span class="st">"Anthony Davis"</span>, <span class="st">"Jakob Poeltl"</span>, <span class="st">"Jarrett Allen"</span>, </span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jusuf Nurkić"</span>, <span class="st">"Clint Capela"</span>, <span class="st">"Ivica Zubac"</span>, <span class="st">"Mo Bamba"</span>, </span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dwight Powell"</span>, <span class="st">"Al Horford"</span>, <span class="st">"Alperen Sengun"</span>, <span class="st">"JaVale McGee"</span>, </span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Daniel Gafford"</span>, <span class="st">"P.J. Washington"</span>, <span class="st">"Precious Achiuwa"</span>, <span class="st">"Jaxson Hayes"</span>, </span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Naz Reid"</span>, <span class="st">"Mitchell Robinson"</span>, <span class="st">"LaMarcus Aldridge"</span>, <span class="st">"Robert Williams III"</span>,   </span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Isaiah Stewart"</span>, <span class="st">"Andre Drummond"</span>, <span class="st">"Moritz Wagner"</span>, <span class="st">"Isaiah Hartenstein"</span>, </span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Drew Eubanks"</span>, <span class="st">"Myles Turner"</span>, <span class="st">"Chimezie Metu"</span>, <span class="st">"Hassan Whiteside"</span>, </span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Steven Adams"</span>, <span class="st">"Kevon Looney"</span>, <span class="st">"Mason Plumlee"</span>, <span class="st">"Richaun Holmes"</span>, </span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Damian Jones"</span>, <span class="st">"Willy Hernangomez"</span>, <span class="st">"Nemanja Bjelica"</span>, <span class="st">"DeMarcus Cousins"</span>, </span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dewayne Dedmon"</span>, <span class="st">"Nic Claxton"</span>, <span class="st">"Onyeka Okongwu"</span>, <span class="st">"Daniel Theis"</span>, </span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dwight Howard"</span>, <span class="st">"Jeremiah Robinson-Earl"</span>, <span class="st">"Kelly Olynyk"</span>, <span class="st">"Serge Ibaka"</span>, </span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Blake Griffin"</span>, <span class="st">"Goga Bitadze"</span>, <span class="st">"Mike Muscala"</span>, <span class="st">"Tristan Thompson"</span>, </span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Omer Yurtseven"</span>, <span class="st">"Isaiah Jackson"</span>, <span class="st">"Jock Landale"</span>, <span class="st">"Robin Lopez"</span>, </span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Khem Birch"</span>, <span class="st">"Alex Len"</span>, <span class="st">"Taj Gibson"</span>, <span class="st">"Zach Collins"</span>, </span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Bismack Biyombo"</span>, <span class="st">"Derrick Favors"</span>, <span class="st">"DeAndre Jordan"</span>, <span class="st">"Thomas Bryant"</span>, </span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Luka Garza"</span>, <span class="st">"Moses Brown"</span>, <span class="st">"Tony Bradley"</span>, <span class="st">"Brook Lopez"</span>, </span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Gorgui Dieng"</span>, <span class="st">"Olivier Sarr"</span>, <span class="st">"Nick Richards"</span>, <span class="st">"Cody Zeller"</span>, </span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Enes Freedom"</span>, <span class="st">"Killian Tillie"</span>, <span class="st">"Paul Reed"</span>, <span class="st">"Paul Millsap"</span>, </span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Boban Marjanovic"</span>, <span class="st">"Frank Kaminsky"</span>, <span class="st">"Bruno Fernando"</span>, <span class="st">"Nerlens Noel"</span>, </span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Udoka Azubuike"</span>, <span class="st">"Greg Monroe"</span>, <span class="st">"Charles Bassey"</span>, <span class="st">"Neemias Queta"</span>, </span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Willie Cauley-Stein"</span>, <span class="st">"Udonis Haslem"</span>, <span class="st">"Luke Kornet"</span>, <span class="st">"Ed Davis"</span>, </span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kai Jones"</span>, <span class="st">"Vernon Carey Jr."</span>, <span class="st">"Marko Simonovic"</span>, <span class="st">"Tacko Fall"</span>, </span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Micah Potter"</span>, <span class="st">"Cheick Diallo"</span>, <span class="st">"Daniel Oturu"</span>, <span class="st">"Norvel Pelle"</span>, </span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jordan Bell"</span>, <span class="st">"Javin DeLaurier"</span>, <span class="st">"Jaime Echenique"</span>, <span class="st">"Jay Huff"</span>, </span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jon Teske"</span>) <span class="sc">~</span> <span class="st">"C"</span>,</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"DeMar DeRozan"</span>, <span class="st">"Giannis Antetokounmpo"</span>, <span class="st">"Kevin Durant"</span>, <span class="st">"Miles Bridges"</span>, </span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Pascal Siakam"</span>, <span class="st">"Julius Randle"</span>, <span class="st">"Jaren Jackson Jr."</span>, <span class="st">"Harrison Barnes"</span>, </span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Tobias Harris"</span>, <span class="st">"Bojan Bogdanovic"</span>, <span class="st">"Domantas Sabonis"</span>, <span class="st">"Scottie Barnes"</span>, </span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Kyle Kuzma"</span>, <span class="st">"Aaron Gordon"</span>, <span class="st">"Evan Mobley"</span>, <span class="st">"Kristaps Porziņģis"</span>, </span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Wendell Carter Jr."</span>, <span class="st">"Carmelo Anthony"</span>, <span class="st">"Jae'Sean Tate"</span>, <span class="st">"Jerami Grant"</span>, </span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dorian Finney-Smith"</span>, <span class="st">"John Collins"</span>, <span class="st">"Marcus Morris Sr."</span>, <span class="st">"Cameron Johnson"</span>, </span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Trey Lyles"</span>, <span class="st">"Jeff Green"</span>, <span class="st">"Danilo Gallinari"</span>, <span class="st">"Paul George"</span>, </span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Darius Bazley"</span>, <span class="st">"Herbert Jones"</span>, <span class="st">"Georges Niang"</span>, <span class="st">"Brandon Clarke"</span>, </span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Obi Toppin"</span>, <span class="st">"Jaden McDaniels"</span>, <span class="st">"Jae Crowder"</span>, <span class="st">"Chuma Okeke"</span>, </span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Robert Covington"</span>, <span class="st">"Grant Williams"</span>, <span class="st">"Doug McDermott"</span>, <span class="st">"Marvin Bagley III"</span>, </span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"P.J. Tucker"</span>, <span class="st">"Kyle Anderson"</span>, <span class="st">"Otto Porter Jr."</span>, <span class="st">"Jarred Vanderbilt"</span>, </span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Taurean Prince"</span>, <span class="st">"Nicolas Batum"</span>, <span class="st">"Rui Hachimura"</span>, <span class="st">"Jalen Smith"</span>, </span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Aleksej Pokusevski"</span>, <span class="st">"Isaiah Roby"</span>, <span class="st">"Rudy Gay"</span>, <span class="st">"JaMychal Green"</span>, </span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Maxi Kleber"</span>, <span class="st">"Lamar Stevens"</span>, <span class="st">"Draymond Green"</span>, <span class="st">"James Johnson"</span>, </span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Eric Paschall"</span>, <span class="st">"Thaddeus Young"</span>, <span class="st">"Larry Nance Jr."</span>, <span class="st">"Stanley Johnson"</span>, </span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Terry Taylor"</span>, <span class="st">"Davis Bertans"</span>, <span class="st">"Derrick Jones Jr."</span>, <span class="st">"Justise Winslow"</span>, </span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Zeke Nnaji"</span>, <span class="st">"Dean Wade"</span>, <span class="st">"Xavier Tillman"</span>, <span class="st">"Day'Ron Sharpe"</span>, </span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Anthony Gill"</span>, <span class="st">"Marquese Chriss"</span>, <span class="st">"Sandro Mamukelashvili"</span>, <span class="st">"Patrick Williams"</span>, </span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Wenyen Gabriel"</span>, <span class="st">"Nathan Knight"</span>, <span class="st">"Santi Aldama"</span>, <span class="st">"Juancho Hernangomez"</span>, </span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Markieff Morris"</span>, <span class="st">"Ish Wainright"</span>, <span class="st">"Gary Clark"</span>, <span class="st">"Semi Ojeleye"</span>, </span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Reggie Perry"</span>, <span class="st">"Jericho Sims"</span>, <span class="st">"KZ Okpala"</span>, <span class="st">"Tyler Cook"</span>, </span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"JT Thor"</span>, <span class="st">"Vlatko Čančar"</span>, <span class="st">"Mamadi Diakite"</span>, <span class="st">"Jabari Parker"</span>, </span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jalen Johnson"</span>, <span class="st">"Jamorko Pickett"</span>, <span class="st">"Usman Garuba"</span>, <span class="st">"Devontae Cacok"</span>, </span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Alize Johnson"</span>,  <span class="st">"Bol Bol"</span>, <span class="st">"D.J. Wilson"</span>, <span class="st">"Chris Silva"</span>, </span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Freddie Gillespie"</span>, <span class="st">"Malik Fitts"</span>, <span class="st">"Isaiah Todd"</span>, <span class="st">"Gabriel Deck"</span>, </span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Petr Cornelie"</span>, <span class="st">"Sekou Doumbouya"</span>, <span class="st">"Juwan Morgan"</span>, <span class="st">"Moses Wright"</span>, </span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Sam Dekker"</span>, <span class="st">"Emanuel Terry"</span>) <span class="sc">~</span> <span class="st">"PF"</span>,</span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Jayson Tatum"</span>, <span class="st">"Jaylen Brown"</span>, <span class="st">"RJ Barrett"</span>, <span class="st">"Khris Middleton"</span>, </span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Saddiq Bey"</span>, <span class="st">"Keldon Johnson"</span>, <span class="st">"Andrew Wiggins"</span>, <span class="st">"Brandon Ingram"</span>, </span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jimmy Butler III"</span>, <span class="st">"Franz Wagner"</span>, <span class="st">"Mikal Bridges"</span>, <span class="st">"Kelly Oubre Jr."</span>, </span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Lauri Markkanen"</span>, <span class="st">"Kevin Huerter"</span>, <span class="st">"Terance Mann"</span>, <span class="st">"Devin Vassell"</span>, </span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Norman Powell"</span>, <span class="st">"OG Anunoby"</span>, <span class="st">"Gordon Hayward"</span>, <span class="st">"Chris Boucher"</span>, </span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Justin Holiday"</span>, <span class="st">"Max Strus"</span>, <span class="st">"De'Andre Hunter"</span>, <span class="st">"Cedi Osman"</span>, </span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"KJ Martin"</span>, <span class="st">"Deni Avdija"</span>, <span class="st">"Josh Giddey"</span>, <span class="st">"Jonathan Kuminga"</span>, </span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Bruce Brown"</span>, <span class="st">"Pat Connaughton"</span>, <span class="st">"Corey Kispert"</span>, <span class="st">"Oshae Brissett"</span>, </span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Dillon Brooks"</span>, <span class="st">"Isaac Okoro"</span>, <span class="st">"Reggie Bullock Jr."</span>, <span class="st">"Royce O'Neale"</span>, </span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Caleb Martin"</span>, <span class="st">"Cody Martin"</span>, <span class="st">"Torrey Craig"</span>, <span class="st">"Ziaire Williams"</span>, </span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cam Reddish"</span>, <span class="st">"Jordan Nwora"</span>, <span class="st">"Javonte Green"</span>, <span class="st">"Nassir Little"</span>, </span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jeremy Lamb"</span>, <span class="st">"Danny Green"</span>, <span class="st">"Trendon Watford"</span>, <span class="st">"Kenrich Williams"</span>, </span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jalen McDaniels"</span>, <span class="st">"CJ Elleby"</span>, <span class="st">"Keita Bates-Diop"</span>, <span class="st">"Trey Murphy III"</span>, </span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Josh Jackson"</span>, <span class="st">"Joe Ingles"</span>, <span class="st">"Naji Marshall"</span>, <span class="st">"Juan Toscano-Anderson"</span>, </span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Joshua Primo"</span>, <span class="st">"Kessler Edwards"</span>, <span class="st">"DeAndre' Bembry"</span>, <span class="st">"Troy Brown Jr."</span>, </span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Svi Mykhailiuk"</span>, <span class="st">"Danuel House Jr."</span>, <span class="st">"David Nwaba"</span>, <span class="st">"Timothe Luwawu-Cabarrot"</span>, </span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Greg Brown III"</span>, <span class="st">"Maurice Harkless"</span>, <span class="st">"Ignas Brazdeikis"</span>, <span class="st">"Aaron Nesmith"</span>, </span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Thanasis Antetokounmpo"</span>, <span class="st">"Kelan Martin"</span>, <span class="st">"Yuta Watanabe"</span>, <span class="st">"Rodney Hood"</span>, </span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Joe Harris"</span>, <span class="st">"Admiral Schofield"</span>, <span class="st">"Kent Bazemore"</span>, <span class="st">"Andre Iguodala"</span>, </span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Isaiah Livers"</span>, <span class="st">"Dylan Windler"</span>, <span class="st">"Jaylen Hoard"</span>, <span class="st">"Justin Anderson"</span>, </span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Trevor Ariza"</span>, <span class="st">"Keljin Blevins"</span>, <span class="st">"Kevin Knox II"</span>, <span class="st">"Michael Porter Jr."</span>, </span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Georgios Kalaitzakis"</span>, <span class="st">"Justin Champagnie"</span>, <span class="st">"Jake Layman"</span>, <span class="st">"Braxton Key"</span>, </span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Sam Hauser"</span>, <span class="st">"Alfonzo McKinnie"</span>, <span class="st">"Leandro Bolmaro"</span>, <span class="st">"Theo Pinson"</span>, </span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Louis King"</span>, <span class="st">"Haywood Highsmith"</span>, <span class="st">"Didi Louzada"</span>, <span class="st">"Abdel Nader"</span>, </span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Paul Watson"</span>, <span class="st">"Chaundee Brown Jr."</span>, <span class="st">"James Ennis III"</span>, <span class="st">"BJ Johnson"</span>, </span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cameron Oliver"</span>, <span class="st">"Wes Iwundu"</span>, <span class="st">"Justin Jackson"</span>, <span class="st">"Aleem Ford"</span>, </span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Cameron McGriff"</span>, <span class="st">"Yves Pons"</span>, <span class="st">"Isaac Bonga"</span>, <span class="st">"Solomon Hill"</span>, </span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Eugene Omoruyi"</span>, <span class="st">"Robert Woodard II"</span>, <span class="st">"Paris Bass"</span>, <span class="st">"Trevon Scott"</span>, </span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Xavier Sneed"</span>, <span class="st">"Chandler Hutchison"</span>, <span class="st">"Jemerrio Jones"</span>, <span class="st">"Matt Ryan"</span>, </span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Aaron Henry"</span>, <span class="st">"George King"</span>, <span class="st">"Zylan Cheatham"</span>, <span class="st">"Feron Hunt"</span>, </span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Arnoldas Kulboka"</span>, <span class="st">"Anthony Lamb"</span>) <span class="sc">~</span> <span class="st">"SF"</span>,</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>      PLAYER_NAME <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Devin Booker"</span>,<span class="st">"Donovan Mitchell"</span>, <span class="st">"Zach LaVine"</span>, <span class="st">"Anthony Edwards"</span>, </span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Terry Rozier"</span>, <span class="st">"Jordan Poole"</span>, <span class="st">"Desmond Bane"</span>, <span class="st">"Tyler Herro"</span>, </span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jalen Brunson"</span>, <span class="st">"Gary Trent Jr."</span>, <span class="st">"Jordan Clarkson"</span>, <span class="st">"Buddy Hield"</span>, </span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Reggie Jackson"</span>, <span class="st">"Jalen Green"</span>, <span class="st">"Evan Fournier"</span>, <span class="st">"Cade Cunningham"</span>, </span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Malik Monk"</span>, <span class="st">"Will Barton"</span>, <span class="st">"Kentavious Caldwell-Pope"</span>, <span class="st">"Derrick White"</span>, </span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Anfernee Simons"</span>, <span class="st">"Caris LeVert"</span>, <span class="st">"Seth Curry"</span>, <span class="st">"Malik Beasley"</span>, </span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Bogdan Bogdanović"</span>, <span class="st">"Alec Burks"</span>, <span class="st">"Bradley Beal"</span>, <span class="st">"Patty Mills"</span>, </span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Luguentz Dort"</span>, <span class="st">"Duncan Robinson"</span>, <span class="st">"Lonnie Walker IV"</span>, <span class="st">"Luke Kennard"</span>, </span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Josh Hart"</span>, <span class="st">"De'Anthony Melton"</span>, <span class="st">"Eric Gordon"</span>, <span class="st">"Grayson Allen"</span>, </span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Chris Duarte"</span>, <span class="st">"Bones Hyland"</span>, <span class="st">"Nickeil Alexander-Walker"</span>, <span class="st">"Ayo Dosunmu"</span>, </span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Gary Harris"</span>, <span class="st">"Josh Richardson"</span>, <span class="st">"Bryn Forbes"</span>, <span class="st">"Ben McLemore"</span>, </span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Klay Thompson"</span>, <span class="st">"Garrison Mathews"</span>, <span class="st">"Hamidou Diallo"</span>, <span class="st">"Terrence Ross"</span>, </span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Amir Coffey"</span>, <span class="st">"Tim Hardaway Jr."</span>, <span class="st">"Talen Horton-Tucker"</span>, <span class="st">"Josh Christopher"</span>, </span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Landry Shamet"</span>, <span class="st">"Cam Thomas"</span>, <span class="st">"Jaylen Nowell"</span>, <span class="st">"Furkan Korkmaz"</span>, </span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Gary Payton II"</span>, <span class="st">"R.J. Hampton"</span>, <span class="st">"Damion Lee"</span>, <span class="st">"Shake Milton"</span>, </span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Austin Reaves"</span>, <span class="st">"Aaron Wiggins"</span>, <span class="st">"Austin Rivers"</span>, <span class="st">"Avery Bradley"</span>, </span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Lance Stephenson"</span>, <span class="st">"Donte DiVincenzo"</span>, <span class="st">"Matisse Thybulle"</span>, <span class="st">"John Konchar"</span>, </span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Brandon Boston"</span>, <span class="st">"Delon Wright"</span>, <span class="st">"Ty Jerome"</span>, <span class="st">"Josh Green"</span>, </span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Terence Davis"</span>, <span class="st">"Garrett Temple"</span>, <span class="st">"Alex Caruso"</span>, <span class="st">"Armoni Brooks"</span>, </span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Wayne Ellington"</span>, <span class="st">"Quentin Grimes"</span>, <span class="st">"Rodney McGruder"</span>, <span class="st">"Keon Johnson"</span>, </span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Wesley Matthews"</span>, <span class="st">"Frank Ntilikina"</span>, <span class="st">"Moses Moody"</span>, <span class="st">"Romeo Langford"</span>, </span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Davon Reed"</span>, <span class="st">"Lindy Waters III"</span>, <span class="st">"Isaiah Joe"</span>, <span class="st">"Tomas Satoransky"</span>, </span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Vít Krejčí"</span>, <span class="st">"Tony Snell"</span>, <span class="st">"Collin Sexton"</span>, <span class="st">"Jared Butler"</span>, </span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Matt Thomas"</span>, <span class="st">"Sterling Brown"</span>, <span class="st">"James Bouknight"</span>, <span class="st">"Josh Okogie"</span>, </span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jarrett Culver"</span>, <span class="st">"Markus Howard"</span>, <span class="st">"Elijah Hughes"</span>, <span class="st">"Victor Oladipo"</span>, </span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"PJ Dozier"</span>, <span class="st">"Skylar Mays"</span>, <span class="st">"Daishen Nix"</span>, <span class="st">"Kyle Guy"</span>, </span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Malcolm Hill"</span>, <span class="st">"Denzel Valentine"</span>, <span class="st">"Joe Wieskamp"</span>, <span class="st">"Jahmi'us Ramsey"</span>, </span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Xavier Moon"</span>, <span class="st">"Cassius Stanley"</span>, <span class="st">"Jay Scrubb"</span>, <span class="st">"Trevelin Queen"</span>, </span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Melvin Frazier Jr."</span>, <span class="st">"Quinndary Weatherspoon"</span>, <span class="st">"Charlie Brown Jr."</span>, </span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Mason Jones"</span>, <span class="st">"Sam Merrill"</span>, <span class="st">"Carsen Edwards"</span>, <span class="st">"Brodric Thomas"</span>,</span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Rayjon Tucker"</span>, <span class="st">"Nik Stauskas"</span>, <span class="st">"Tyrone Wallace"</span>, <span class="st">"Ruben Nembhard Jr."</span>, </span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Langston Galloway"</span>, <span class="st">"Marcus Garrett"</span>, <span class="st">"Gabriel Lundberg"</span>, <span class="st">"Gabe York"</span>, </span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Mac McClung"</span>, <span class="st">"Dakota Mathias"</span>, <span class="st">"Craig Sword"</span>, <span class="st">"Miye Oni"</span>,</span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jordan Schakel"</span>, <span class="st">"Wayne Selden"</span>, <span class="st">"Damyean Dotson"</span>, <span class="st">"Shaquille Harrison"</span>, </span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Scotty Hopson"</span>, <span class="st">"Rob Edwards"</span>, <span class="st">"Deividas Sirvydis"</span>, <span class="st">"Joel Ayayi"</span>, </span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Shaq Buchanan"</span>, <span class="st">"Ahmad Caver"</span>, <span class="st">"Jarron Cumberland"</span>, <span class="st">"DaQuan Jeffries"</span>,</span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Joe Johnson"</span>, <span class="st">"Jaylen Morris"</span>, <span class="st">"Jaden Springer"</span>, <span class="st">"Scottie Lewis"</span>, </span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Jordan Goodwin"</span>, <span class="st">"Tyler Hall"</span>, <span class="st">"Nate Hinton"</span>, <span class="st">"DeJon Jarreau"</span>, </span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"David Johnson"</span>, <span class="st">"CJ Miles"</span>, <span class="st">"Matt Mooney"</span>, <span class="st">"Ade Murkey"</span>, <span class="st">"Trayvon Palmer"</span>, </span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"MJ Walker"</span>) <span class="sc">~</span> <span class="st">"SG"</span>,</span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"To_Map"</span> </span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>    <span class="at">PTS =</span> <span class="fu">as.numeric</span>(PTS),</span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>    <span class="at">AGE =</span> <span class="fu">as.numeric</span>(AGE),</span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>    <span class="at">AST =</span> <span class="fu">as.numeric</span>(AST),</span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a>    <span class="at">REB =</span> <span class="fu">as.numeric</span>(REB),</span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a>    <span class="at">Position =</span> <span class="fu">as.factor</span>(Position),</span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a>    <span class="at">FG_PCT =</span> <span class="fu">as.numeric</span>(FG_PCT),</span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a>    <span class="at">FG3_PCT =</span> <span class="fu">as.numeric</span>(FG3_PCT),</span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a>    <span class="at">FT_PCT =</span> <span class="fu">as.numeric</span>(FT_PCT),</span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a>    <span class="at">OREB =</span> <span class="fu">as.numeric</span>(OREB),</span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a>    <span class="at">DREB =</span> <span class="fu">as.numeric</span>(DREB),</span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a>    <span class="at">TOV =</span> <span class="fu">as.numeric</span>(TOV),</span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a>    <span class="at">STL =</span> <span class="fu">as.numeric</span>(STL),</span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a>    <span class="at">BLK =</span> <span class="fu">as.numeric</span>(BLK),</span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a>    <span class="at">Peso =</span> <span class="fu">as.numeric</span>(Peso)</span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a><span class="co"># Facilitar carregamentos futuros</span></span>
+<span id="cb2-231"><a href="#cb2-231" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="sc">|&gt;</span> <span class="fu">write.csv2</span>(<span class="st">"includes/nba.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-232"><a href="#cb2-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-233"><a href="#cb2-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-234"><a href="#cb2-234" aria-hidden="true" tabindex="-1"></a><span class="co"># Position - Armador (PG), Ala-armador (SG), Ala (SF), Ala-pivô (PF) e Pivô (C)</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 </section>
 <section id="fonte-dos-dados" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="fonte-dos-dados"><span class="header-section-number">2</span> Fonte dos Dados</h2>
-<p>Os dados utilizados neste projeto referem-se a estatística individuais de cada jogador da NBA na Temporada 2021-2022, obtidas com bases públicas que consolidam as informações de desempenho por atleta ao longo da temporada. Vale ressaltar que a base foi retirada do pacote <em>hoopR</em> juntamente ao site <a href="https://www.basketball-reference.com/leagues/NBA_2022_totals.html">Basketball Reference</a>.</p>
+<p>Os dados utilizados neste projeto referem-se a estatística individuais de cada jogador da NBA na Temporada 2021-2022, obtidas com bases públicas que consolidam as informações de desempenho por atleta ao longo da temporada. Vale ressaltar que a base foi retirada do pacote <em>hoopR</em> juntamente ao site <a href="https://www.basketball-reference.com/leagues/NBA_2022_per_minute.html">Basketball Reference</a>.</p>
 </section>
 <section id="descrição-das-variáveis" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="descrição-das-variáveis"><span class="header-section-number">3</span> Descrição das Variáveis</h2>
-<p>O banco de dados possui 12 variáveis, na qual, a variável <em>PLAYER_NAME</em> e <em>TEAM_ABBREVIATION</em> não irrelevantes para o projeto. Sendo assim, as variáveis utilizadas serão:</p>
+<p>O banco de dados possui 17 variáveis, na qual, as variáveis <em>PLAYER_NAME</em> e <em>TEAM_ABBREVIATION</em> são irrelevantes para o projeto. Sendo assim, as variáveis utilizadas serão:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -437,19 +490,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>PTS</td>
-<td>Média de pontos por jogo</td>
+<td>Pontos por 36 minutos</td>
 </tr>
 <tr class="odd">
 <td>AST</td>
-<td>Média de assistências por jogo</td>
+<td>Assistências por 36 minutos</td>
 </tr>
 <tr class="even">
 <td>REB</td>
-<td>Média de rebotes por jogo</td>
+<td>Rebotes por 36 minutos</td>
 </tr>
 <tr class="odd">
-<td>MIN</td>
-<td>Minutos médios em quadra</td>
+<td>OREB</td>
+<td>Rebotes ofensivos por 36 minutos</td>
+</tr>
+<tr class="even">
+<td>DREB</td>
+<td>Rebotes defensivos por 36 minutos</td>
+</tr>
+<tr class="odd">
+<td>TOV</td>
+<td>Perdas de Posse por 36 minutos</td>
+</tr>
+<tr class="even">
+<td>STL</td>
+<td>Roubos de bola por 36 minutos</td>
+</tr>
+<tr class="odd">
+<td>BLK</td>
+<td>Tocos por 36 minutos</td>
 </tr>
 <tr class="even">
 <td>FG_PCT</td>
@@ -464,12 +533,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>Percentual de lances livres</td>
 </tr>
 <tr class="odd">
-<td>Position</td>
-<td>Posição principal do jogador</td>
+<td>Peso</td>
+<td>Peso do jogador (KG)</td>
 </tr>
 <tr class="even">
-<td>Faixa_Etaria</td>
-<td>Classificação etária do atleta</td>
+<td>Altura</td>
+<td>Altura do jogador (m)</td>
+</tr>
+<tr class="odd">
+<td>Position</td>
+<td>Posição principal do jogador</td>
 </tr>
 </tbody>
 </table>

@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nielson Alexandre de Almeida Dantas Junior">
-<meta name="description" content="Website interativo documentando a pipeline completo de análise de desempenho por posição">
 
-<title>As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA</title>
+<title>O Desafio do Scouting Moderno na NBA</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -89,15 +88,19 @@ ul.task-list li input[type="checkbox"] {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="./index.html" aria-current="page"> 
-<span class="menu-text">Home</span></a>
+<span class="menu-text">Página Inicial</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./coleta.html"> 
-<span class="menu-text">Coleta</span></a>
+<span class="menu-text">Configuração</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./aed.html"> 
 <span class="menu-text">AED</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./modelo.html"> 
+<span class="menu-text">Modelagem</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
@@ -127,15 +130,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Nesta página</h2>
    
   <ul>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução"><span class="header-section-number">1</span> Introdução</a>
-  <ul class="collapse">
-  <li><a href="#contextualização" id="toc-contextualização" class="nav-link" data-scroll-target="#contextualização"><span class="header-section-number">1.1</span> Contextualização</a></li>
-  <li><a href="#objetivos" id="toc-objetivos" class="nav-link" data-scroll-target="#objetivos"><span class="header-section-number">1.2</span> Objetivos</a></li>
-  </ul></li>
-  <li><a href="#metodologia" id="toc-metodologia" class="nav-link" data-scroll-target="#metodologia"><span class="header-section-number">2</span> Metodologia</a>
-  <ul class="collapse">
-  <li><a href="#ferramentas-utilizadas" id="toc-ferramentas-utilizadas" class="nav-link" data-scroll-target="#ferramentas-utilizadas"><span class="header-section-number">2.1</span> Ferramentas Utilizadas</a></li>
-  </ul></li>
+  <li><a href="#uma-breve-introdução" id="toc-uma-breve-introdução" class="nav-link active" data-scroll-target="#uma-breve-introdução"><span class="header-section-number">1</span> Uma Breve Introdução</a></li>
+  <li><a href="#o-grande-desafio-do-basquete-moderno" id="toc-o-grande-desafio-do-basquete-moderno" class="nav-link" data-scroll-target="#o-grande-desafio-do-basquete-moderno"><span class="header-section-number">2</span> O Grande Desafio do Basquete Moderno</a></li>
+  <li><a href="#a-solução-usando-machine-learning" id="toc-a-solução-usando-machine-learning" class="nav-link" data-scroll-target="#a-solução-usando-machine-learning"><span class="header-section-number">3</span> A Solução usando Machine Learning</a></li>
+  <li><a href="#metodologia" id="toc-metodologia" class="nav-link" data-scroll-target="#metodologia"><span class="header-section-number">4</span> Metodologia</a></li>
+  <li><a href="#ferramentas-do-projeto" id="toc-ferramentas-do-projeto" class="nav-link" data-scroll-target="#ferramentas-do-projeto"><span class="header-section-number">5</span> Ferramentas do Projeto</a></li>
   </ul>
 </nav>
     </div>
@@ -144,14 +143,9 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA</h1>
+<h1 class="title">O Desafio do Scouting Moderno na NBA</h1>
 </div>
 
-<div>
-  <div class="description">
-    Website interativo documentando a pipeline completo de análise de desempenho por posição
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
@@ -172,37 +166,36 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introdução" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="introdução"><span class="header-section-number">1</span> Introdução</h2>
+<section id="uma-breve-introdução" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="uma-breve-introdução"><span class="header-section-number">1</span> Uma Breve Introdução</h2>
 <p>Este projeto apresenta uma implementação de um Workflow para um projeto de Aprendizagem de Máquina (ML) aplicado à análise de dados esportivos, com enfâse no desempenho de jogadores da National Basketball Association (NBA) durante a temporada 2021-2022.</p>
-<section id="contextualização" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="contextualização"><span class="header-section-number">1.1</span> Contextualização</h3>
-<p>Com o crescimento e a disponibilidade de dados estatísticos no esporte, técnicas de análise preditiva e aprendizado de máquina tornam-se ferramentas valiosas para compreender padrões de desempenho. Na NBA, as posições tradicionais (Point Guard, Shooting Guard, Small Forward, Power Forward e Center) representam papéis específicos em quadra, mas a evolução do jogo tem desafiado essas categorizações.</p>
 </section>
-<section id="objetivos" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="objetivos"><span class="header-section-number">1.2</span> Objetivos</h3>
-<section id="objetivos-geral" class="level4" data-number="1.2.1">
-<h4 data-number="1.2.1" class="anchored" data-anchor-id="objetivos-geral"><span class="header-section-number">1.2.1</span> Objetivos Geral</h4>
+<section id="o-grande-desafio-do-basquete-moderno" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="o-grande-desafio-do-basquete-moderno"><span class="header-section-number">2</span> O Grande Desafio do Basquete Moderno</h2>
+<p>A evolução para um jogo sem posições fixas (<em>positionless basketball</em>) criou um paradoxo para scouts e analistas:</p>
 <ul>
-<li>Implementar e documentar uma pipelina que possa ser reproduzida usando métodos de Machine Learning para análise do desempenho dos jogadores da NBA por posição</li>
+<li><p><strong>Jogadores multifuncionais</strong> como Nikola Jokić ou Giannis Antetokounmpo não se encaixam em categorias tradicionais.</p></li>
+<li><p>A classificação por “olhômetro” ou estatísticas isoladas é <strong>subjetiva e propensa a viés</strong>.</p></li>
+<li><p>Um <strong>erro de avaliação</strong> no draft pode custar milhões e o futuro de uma franquia.</p></li>
 </ul>
+<p><strong>Questionamento: Como identificar, de forma objetiva e escalável, onde um atleta terá maior impacto em quadra?</strong></p>
 </section>
-<section id="objetivos-específicos" class="level4" data-number="1.2.2">
-<h4 data-number="1.2.2" class="anchored" data-anchor-id="objetivos-específicos"><span class="header-section-number">1.2.2</span> Objetivos Específicos</h4>
-<ul>
-<li>Coletar dados da temporada 21-22 da NBA</li>
-<li>Realizar uma análise exploratória para identificar padrões por posição</li>
-<li>Aplicar técnicas de pré-processamentos nos dados</li>
-<li>Implementar e comparadas modelos de classificação</li>
-<li>Avaliar a peformance dos modelos usando as métricas</li>
-<li>Extrair insights sobre a relação entre as estatísticas e as posições</li>
-</ul>
+<section id="a-solução-usando-machine-learning" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="a-solução-usando-machine-learning"><span class="header-section-number">3</span> A Solução usando Machine Learning</h2>
+<p>Este projeto implementa um <strong>pipeline completo de Machine Learning</strong> que oferece uma resposta baseada em dados para o desafio do scouting:</p>
+<p><strong>Nosso Objetivo Principal:</strong> Desenvolver e disponibilizar uma ferramenta reprodutível de classificação que auxilie na projeção de posição e potencial de jogadores.</p>
+<p><strong>Objetivos Específicos:</strong></p>
+<ol type="1">
+<li><strong>Coletar e processar</strong> estatísticas da NBA (temporada 2021-22).</li>
+<li><strong>Implementar e comparar</strong> múltiplos algoritmos de classificação (KNN, Naive Bayes, Regressão Logistica/Multinomial, etc.).</li>
+<li><strong>Avaliar rigorosamente</strong> os modelos com métricas multiclasse.</li>
+<li><strong>Extrair insights</strong> sobre quais atributos definem cada função em quadra.</li>
+<li><strong>Disponibilizar uma demonstração interativa</strong> para testar o classificador.</li>
+</ol>
 </section>
-</section>
-</section>
-<section id="metodologia" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="metodologia"><span class="header-section-number">2</span> Metodologia</h2>
-<p>O projeto segue um Fluxo de Trabalho, conforme as etapas a seguir:</p>
+<section id="metodologia" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="metodologia"><span class="header-section-number">4</span> Metodologia</h2>
+<p>O projeto segue um pipeline estruturado:</p>
 <ol type="1">
 <li>Coleta dos dados brutos</li>
 <li>Exploração dos dados utilizando técnicas de análise exploratória</li>
@@ -211,22 +204,18 @@ ul.task-list li input[type="checkbox"] {
 <li>Avaliação dos modelos</li>
 <li>Interpretação dos resultados</li>
 </ol>
-<section id="ferramentas-utilizadas" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="ferramentas-utilizadas"><span class="header-section-number">2.1</span> Ferramentas Utilizadas</h3>
+</section>
+<section id="ferramentas-do-projeto" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="ferramentas-do-projeto"><span class="header-section-number">5</span> Ferramentas do Projeto</h2>
 <ul>
 <li><strong>Linguagem:</strong> R</li>
-<li><strong>Framework de documentação:</strong> Quarto</li>
-<li><strong>Pacotes principais:</strong>
-<ul>
-<li><code>tidyverse</code> usado para manipulação de dados</li>
-<li><code>tidymodels</code> usado para modelagem</li>
-<li><code>ggplot2</code> usado para visualização</li>
-<li><code>hoopR</code> usado para carregar o banco de dados</li>
-</ul></li>
+<li><strong>Ecossistema para ML:</strong> <code>tidymodels</code> (para modelagem), <code>tidyverse</code> (para manipulação de dados)</li>
+<li><strong>Visualização:</strong> <code>ggplot2</code></li>
+<li><strong>Coleta de Dados:</strong> <code>hoopR</code></li>
+<li><strong>Documentação:</strong> Quarto</li>
 </ul>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

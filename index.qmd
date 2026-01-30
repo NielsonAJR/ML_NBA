@@ -1,37 +1,45 @@
 ---
-title: "As 5 Posições dos Dados: Um Fluxo de Machine Learning para Mapear a NBA"
-description: "Website interativo documentando a pipeline completo de análise de desempenho por posição"
+title: "O Desafio do Scouting Moderno na NBA"
 author: Nielson Alexandre de Almeida Dantas Junior
 lang: pt
 ---
 
-## Introdução
+## Uma Breve Introdução
 
 Este projeto apresenta uma implementação de um Workflow para um projeto de Aprendizagem de Máquina (ML) aplicado à análise de dados esportivos, com enfâse no desempenho de jogadores da National Basketball Association (NBA) durante a temporada 2021-2022. 
 
-### Contextualização
+## O Grande Desafio do Basquete Moderno
 
-Com o crescimento e a disponibilidade de dados estatísticos no esporte, técnicas de análise preditiva e aprendizado de máquina tornam-se ferramentas valiosas para compreender padrões de desempenho. Na NBA, as posições tradicionais (Point Guard, Shooting Guard, Small Forward, Power Forward e Center) representam papéis específicos em quadra, mas a evolução do jogo tem desafiado essas categorizações.
+A evolução para um jogo sem posições fixas (*positionless basketball*) criou um paradoxo para scouts e analistas:
 
-### Objetivos
+-   **Jogadores multifuncionais** como Nikola Jokić ou Giannis Antetokounmpo não se encaixam em categorias tradicionais.
 
-#### Objetivos Geral
+-   A classificação por "olhômetro" ou estatísticas isoladas é **subjetiva e propensa a viés**.
 
-- Implementar e documentar uma pipelina que possa ser reproduzida usando métodos de Machine Learning para análise do desempenho dos jogadores da NBA por posição
+-   Um **erro de avaliação** no draft pode custar milhões e o futuro de uma franquia.
 
-#### Objetivos Específicos 
+**Questionamento: Como identificar, de forma objetiva e escalável, onde um atleta terá maior impacto em quadra?**
 
-- Coletar dados da temporada 21-22 da NBA
-- Realizar uma análise exploratória para identificar padrões por posição
-- Aplicar técnicas de pré-processamentos nos dados
-- Implementar e comparadas modelos de classificação
-- Avaliar a peformance dos modelos usando as métricas
-- Extrair insights sobre a relação entre as estatísticas e as posições
+## A Solução usando Machine Learning
+
+Este projeto implementa um **pipeline completo de Machine Learning** que oferece uma resposta baseada em dados para o desafio do scouting:
+
+**Nosso Objetivo Principal:**
+Desenvolver e disponibilizar uma ferramenta reprodutível de classificação que auxilie na projeção de posição e potencial de jogadores.
+
+**Objetivos Específicos:**
+
+1.  **Coletar e processar** estatísticas da NBA (temporada 2021-22).
+2.  **Implementar e comparar** múltiplos algoritmos de classificação (KNN, Naive Bayes, Regressão Logistica/Multinomial, etc.).
+3.  **Avaliar rigorosamente** os modelos com métricas multiclasse.
+4.  **Extrair insights** sobre quais atributos definem cada função em quadra.
+5.  **Disponibilizar uma demonstração interativa** para testar o classificador.
 
 
-## Metodologia 
+## Metodologia
 
-O projeto segue um Fluxo de Trabalho, conforme as etapas a seguir:
+
+O projeto segue um pipeline estruturado:
 
 1. Coleta dos dados brutos
 2. Exploração dos dados utilizando técnicas de análise exploratória
@@ -41,16 +49,12 @@ O projeto segue um Fluxo de Trabalho, conforme as etapas a seguir:
 6. Interpretação dos resultados
 
 
-### Ferramentas Utilizadas
+## Ferramentas do Projeto
 
-- **Linguagem:** R
-- **Framework de documentação:** Quarto
-- **Pacotes principais:**
-  - `tidyverse` usado para manipulação de dados
-  - `tidymodels` usado para modelagem
-  - `ggplot2` usado para visualização
-  - `hoopR` usado para carregar o banco de dados
-
-
+-   **Linguagem:** R
+-   **Ecossistema para ML:** `tidymodels` (para modelagem), `tidyverse` (para manipulação de dados)
+-   **Visualização:** `ggplot2`
+-   **Coleta de Dados:** `hoopR`
+-   **Documentação:** Quarto
 
 

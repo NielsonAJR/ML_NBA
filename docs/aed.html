@@ -121,15 +121,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Home</span></a>
+<span class="menu-text">Página Inicial</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./coleta.html"> 
-<span class="menu-text">Coleta</span></a>
+<span class="menu-text">Configuração</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./aed.html" aria-current="page"> 
 <span class="menu-text">AED</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./modelo.html"> 
+<span class="menu-text">Modelagem</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
@@ -170,12 +174,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#distribuição-das-posições" id="toc-distribuição-das-posições" class="nav-link" data-scroll-target="#distribuição-das-posições"><span class="header-section-number">2.2</span> Distribuição das posições</a></li>
   <li><a href="#pontos-por-posição" id="toc-pontos-por-posição" class="nav-link" data-scroll-target="#pontos-por-posição"><span class="header-section-number">2.3</span> Pontos por posição</a></li>
   <li><a href="#separabilidade-entre-posições" id="toc-separabilidade-entre-posições" class="nav-link" data-scroll-target="#separabilidade-entre-posições"><span class="header-section-number">2.4</span> Separabilidade entre posições</a></li>
-  <li><a href="#relação-entre-minutos-e-pontos" id="toc-relação-entre-minutos-e-pontos" class="nav-link" data-scroll-target="#relação-entre-minutos-e-pontos"><span class="header-section-number">2.5</span> Relação entre minutos e pontos</a></li>
-  <li><a href="#eficiência-no-arremesso-fg" id="toc-eficiência-no-arremesso-fg" class="nav-link" data-scroll-target="#eficiência-no-arremesso-fg"><span class="header-section-number">2.6</span> Eficiência no arremesso (FG%)</a></li>
+  <li><a href="#eficiência-no-arremesso-fg" id="toc-eficiência-no-arremesso-fg" class="nav-link" data-scroll-target="#eficiência-no-arremesso-fg"><span class="header-section-number">2.5</span> Eficiência no arremesso (FG%)</a></li>
   </ul></li>
-  <li><a href="#análise-por-faixa-etária" id="toc-análise-por-faixa-etária" class="nav-link" data-scroll-target="#análise-por-faixa-etária"><span class="header-section-number">3</span> Análise por Faixa Etária</a></li>
-  <li><a href="#correlação-entre-variáveis-numéricas" id="toc-correlação-entre-variáveis-numéricas" class="nav-link" data-scroll-target="#correlação-entre-variáveis-numéricas"><span class="header-section-number">4</span> Correlação entre variáveis numéricas</a></li>
-  <li><a href="#principais-insights-da-análise-exploratória" id="toc-principais-insights-da-análise-exploratória" class="nav-link" data-scroll-target="#principais-insights-da-análise-exploratória"><span class="header-section-number">5</span> Principais Insights da Análise Exploratória</a></li>
+  <li><a href="#correlação-entre-variáveis-numéricas" id="toc-correlação-entre-variáveis-numéricas" class="nav-link" data-scroll-target="#correlação-entre-variáveis-numéricas"><span class="header-section-number">3</span> Correlação entre variáveis numéricas</a></li>
+  <li><a href="#principais-insights-da-análise-exploratória" id="toc-principais-insights-da-análise-exploratória" class="nav-link" data-scroll-target="#principais-insights-da-análise-exploratória"><span class="header-section-number">4</span> Principais Insights da Análise Exploratória</a></li>
   </ul>
 </nav>
     </div>
@@ -209,24 +211,165 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details class="code-fold">
 <summary>Mostrar código</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="sc">|&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(AGE, PTS, AST, REB, FG_PCT, FG3_PCT, FT_PCT, MIN) <span class="sc">|&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(AGE, PTS, AST, REB, OREB, DREB, TOV, STL, BLK , Peso, Altura) <span class="sc">|&gt;</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">everything</span>(),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      Média   <span class="ot">=</span> <span class="er">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">Mediana =</span> <span class="sc">~</span><span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">SD      =</span> <span class="sc">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      Mín     <span class="ot">=</span> <span class="er">~</span><span class="fu">min</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">Q1      =</span> <span class="sc">~</span><span class="fu">quantile</span>(.x, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">Q3      =</span> <span class="sc">~</span><span class="fu">quantile</span>(.x, <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      Máx     <span class="ot">=</span> <span class="er">~</span><span class="fu">max</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">.names =</span> <span class="st">"{.col}_{.fn}"</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"Variável"</span>, <span class="st">"Estatística"</span>),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> Variável,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> value</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">"Resumo Estatístico dos Dados (per36)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>      AGE             PTS              AST             REB        
- Min.   :19.00   Min.   :   0.0   Min.   :  0.0   Min.   :   0.0  
- 1st Qu.:23.00   1st Qu.:  67.0   1st Qu.: 12.0   1st Qu.:  33.0  
- Median :25.00   Median : 319.0   Median : 59.0   Median : 135.0  
- Mean   :26.17   Mean   : 449.8   Mean   :100.2   Mean   : 180.7  
- 3rd Qu.:29.00   3rd Qu.: 685.0   3rd Qu.:145.0   3rd Qu.: 271.0  
- Max.   :42.00   Max.   :2155.0   Max.   :737.0   Max.   :1019.0  
-     FG_PCT          FG3_PCT           FT_PCT            MIN           
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :   0.8433  
- 1st Qu.:0.3930   1st Qu.:0.2370   1st Qu.:0.6250   1st Qu.: 194.7883  
- Median :0.4410   Median :0.3270   Median :0.7530   Median : 883.2283  
- Mean   :0.4319   Mean   :0.2825   Mean   :0.6747   Mean   : 981.4050  
- 3rd Qu.:0.4960   3rd Qu.:0.3690   3rd Qu.:0.8360   3rd Qu.:1669.5300  
- Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :2854.3533  </code></pre>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Resumo Estatístico dos Dados (per36)</caption>
+<colgroup>
+<col style="width: 15%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Estatística</th>
+<th style="text-align: right;">AGE</th>
+<th style="text-align: right;">PTS</th>
+<th style="text-align: right;">AST</th>
+<th style="text-align: right;">REB</th>
+<th style="text-align: right;">OREB</th>
+<th style="text-align: right;">DREB</th>
+<th style="text-align: right;">TOV</th>
+<th style="text-align: right;">STL</th>
+<th style="text-align: right;">BLK</th>
+<th style="text-align: right;">Peso</th>
+<th style="text-align: right;">Altura</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Média</td>
+<td style="text-align: right;">26.17</td>
+<td style="text-align: right;">14.18</td>
+<td style="text-align: right;">3.19</td>
+<td style="text-align: right;">6.59</td>
+<td style="text-align: right;">1.71</td>
+<td style="text-align: right;">4.88</td>
+<td style="text-align: right;">1.88</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">0.71</td>
+<td style="text-align: right;">97.58</td>
+<td style="text-align: right;">1.98</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mediana</td>
+<td style="text-align: right;">25.00</td>
+<td style="text-align: right;">13.90</td>
+<td style="text-align: right;">2.60</td>
+<td style="text-align: right;">5.80</td>
+<td style="text-align: right;">1.10</td>
+<td style="text-align: right;">4.40</td>
+<td style="text-align: right;">1.70</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">97.07</td>
+<td style="text-align: right;">1.98</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SD</td>
+<td style="text-align: right;">4.15</td>
+<td style="text-align: right;">6.60</td>
+<td style="text-align: right;">2.18</td>
+<td style="text-align: right;">3.41</td>
+<td style="text-align: right;">1.70</td>
+<td style="text-align: right;">2.25</td>
+<td style="text-align: right;">1.42</td>
+<td style="text-align: right;">1.40</td>
+<td style="text-align: right;">0.84</td>
+<td style="text-align: right;">11.13</td>
+<td style="text-align: right;">0.08</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mín</td>
+<td style="text-align: right;">19.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">72.57</td>
+<td style="text-align: right;">1.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Q1</td>
+<td style="text-align: right;">23.00</td>
+<td style="text-align: right;">10.60</td>
+<td style="text-align: right;">1.70</td>
+<td style="text-align: right;">4.40</td>
+<td style="text-align: right;">0.60</td>
+<td style="text-align: right;">3.50</td>
+<td style="text-align: right;">1.20</td>
+<td style="text-align: right;">0.70</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">89.36</td>
+<td style="text-align: right;">1.93</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Q3</td>
+<td style="text-align: right;">29.00</td>
+<td style="text-align: right;">17.40</td>
+<td style="text-align: right;">4.40</td>
+<td style="text-align: right;">8.60</td>
+<td style="text-align: right;">2.40</td>
+<td style="text-align: right;">6.20</td>
+<td style="text-align: right;">2.30</td>
+<td style="text-align: right;">1.40</td>
+<td style="text-align: right;">0.90</td>
+<td style="text-align: right;">104.78</td>
+<td style="text-align: right;">2.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Máx</td>
+<td style="text-align: right;">42.00</td>
+<td style="text-align: right;">85.40</td>
+<td style="text-align: right;">13.10</td>
+<td style="text-align: right;">29.70</td>
+<td style="text-align: right;">17.90</td>
+<td style="text-align: right;">13.80</td>
+<td style="text-align: right;">18.60</td>
+<td style="text-align: right;">18.60</td>
+<td style="text-align: right;">12.80</td>
+<td style="text-align: right;">141.07</td>
+<td style="text-align: right;">2.29</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
@@ -235,21 +378,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dados_analise<span class="sc">$</span>Position)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dados_analise<span class="sc">$</span>Position) <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Posição"</span>, <span class="st">"Frequência"</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-  C  PF  PG  SF  SG 
-109 106 111 122 157 </code></pre>
-</div>
-<details class="code-fold">
-<summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dados_analise<span class="sc">$</span>Faixa_Etaria)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-  Adulto    Jovem Veterano 
-     259      251       95 </code></pre>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Posição</th>
+<th style="text-align: right;">Frequência</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">109</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PF</td>
+<td style="text-align: right;">106</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PG</td>
+<td style="text-align: right;">111</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SF</td>
+<td style="text-align: right;">122</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SG</td>
+<td style="text-align: right;">157</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
@@ -261,10 +423,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> AGE)) <span class="sc">+</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição da Idade dos Jogadores"</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Idade"</span>, <span class="at">y =</span> <span class="st">"Frequência"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> AGE)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição da Idade dos Jogadores"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Idade"</span>, <span class="at">y =</span> <span class="st">"Frequência"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -280,13 +442,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> Position)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribuição das Posições dos Jogadores"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Posição"</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Quantidade de Jogadores"</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> Position)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribuição das Posições dos Jogadores"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Posição"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Quantidade de Jogadores"</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -302,10 +464,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> Position, <span class="at">y =</span> PTS, <span class="at">fill =</span> Position)) <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição de Pontos por Posição"</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Posição"</span>, <span class="at">y =</span> <span class="st">"Pontos"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> Position, <span class="at">y =</span> PTS, <span class="at">fill =</span> Position)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição de Pontos por Posição"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Posição"</span>, <span class="at">y =</span> <span class="st">"Pontos"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -321,13 +483,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> AST, <span class="at">y =</span> REB, <span class="at">color =</span> Position)) <span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Separabilidade entre Posições (Assistências vs Rebotes)"</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Assistências"</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Rebotes"</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> AST, <span class="at">y =</span> REB, <span class="at">color =</span> Position)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Separabilidade entre Posições (Assistências vs Rebotes)"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Assistências"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Rebotes"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -338,16 +500,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="relação-entre-minutos-e-pontos" class="level3" data-number="2.5">
-<h3 data-number="2.5" class="anchored" data-anchor-id="relação-entre-minutos-e-pontos"><span class="header-section-number">2.5</span> Relação entre minutos e pontos</h3>
+<section id="eficiência-no-arremesso-fg" class="level3" data-number="2.5">
+<h3 data-number="2.5" class="anchored" data-anchor-id="eficiência-no-arremesso-fg"><span class="header-section-number">2.5</span> Eficiência no arremesso (FG%)</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> MIN, <span class="at">y =</span> PTS)) <span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Minutos vs Pontos"</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Minutos Jogados"</span>, <span class="at">y =</span> <span class="st">"Pontos"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> FG_PCT)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">fill =</span> <span class="st">"darkgreen"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição do FG%"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Field Goal %"</span>, <span class="at">y =</span> <span class="st">"Frequência"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -358,15 +519,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="eficiência-no-arremesso-fg" class="level3" data-number="2.6">
-<h3 data-number="2.6" class="anchored" data-anchor-id="eficiência-no-arremesso-fg"><span class="header-section-number">2.6</span> Eficiência no arremesso (FG%)</h3>
+</section>
+<section id="correlação-entre-variáveis-numéricas" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="correlação-entre-variáveis-numéricas"><span class="header-section-number">3</span> Correlação entre variáveis numéricas</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dados_analise, <span class="fu">aes</span>(<span class="at">x =</span> FG_PCT)) <span class="sc">+</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>, <span class="at">fill =</span> <span class="st">"darkgreen"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição do FG%"</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Field Goal %"</span>, <span class="at">y =</span> <span class="st">"Frequência"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(dados_analise <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(AGE, PTS, AST, REB, OREB, DREB, TOV, STL, BLK, FG_PCT, FG3_PCT, FT_PCT, Altura, Peso), <span class="at">use =</span> <span class="st">"complete.obs"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"color"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">tl.col =</span> <span class="st">"black"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -377,81 +540,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-</section>
-<section id="análise-por-faixa-etária" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="análise-por-faixa-etária"><span class="header-section-number">3</span> Análise por Faixa Etária</h2>
-<div class="cell">
-<details class="code-fold">
-<summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Faixa_Etaria) <span class="sc">%&gt;%</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_pts =</span> <span class="fu">mean</span>(PTS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_ast =</span> <span class="fu">mean</span>(AST, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_reb =</span> <span class="fu">mean</span>(REB, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Faixa_Etaria</th>
-<th style="text-align: right;">media_pts</th>
-<th style="text-align: right;">media_ast</th>
-<th style="text-align: right;">media_reb</th>
-<th style="text-align: right;">n</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Adulto</td>
-<td style="text-align: right;">453.2625</td>
-<td style="text-align: right;">96.27027</td>
-<td style="text-align: right;">186.3282</td>
-<td style="text-align: right;">259</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Jovem</td>
-<td style="text-align: right;">411.6375</td>
-<td style="text-align: right;">87.92032</td>
-<td style="text-align: right;">161.3267</td>
-<td style="text-align: right;">251</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Veterano</td>
-<td style="text-align: right;">541.0421</td>
-<td style="text-align: right;">143.51579</td>
-<td style="text-align: right;">216.7895</td>
-<td style="text-align: right;">95</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="correlação-entre-variáveis-numéricas" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="correlação-entre-variáveis-numéricas"><span class="header-section-number">4</span> Correlação entre variáveis numéricas</h2>
-<div class="cell">
-<details class="code-fold">
-<summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(dados_analise <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(PTS, AST, REB, MIN), <span class="at">use =</span> <span class="st">"complete.obs"</span>),</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"color"</span>,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">tl.col =</span> <span class="st">"black"</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="aed_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="principais-insights-da-análise-exploratória" class="level2" data-number="5">
-<h2 data-number="5" class="anchored" data-anchor-id="principais-insights-da-análise-exploratória"><span class="header-section-number">5</span> Principais Insights da Análise Exploratória</h2>
+<section id="principais-insights-da-análise-exploratória" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="principais-insights-da-análise-exploratória"><span class="header-section-number">4</span> Principais Insights da Análise Exploratória</h2>
 
 
 </section>
