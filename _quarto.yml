@@ -14,6 +14,8 @@ website:
         text: AED
       - href: modelo.qmd
         text: Modelagem
+      - href: modelo2.qmd
+        text: "Modelagem Alternativa"
       - about.qmd
     right:
       - icon: github

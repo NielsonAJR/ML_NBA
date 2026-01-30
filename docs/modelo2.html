@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Ajuste e Avaliação do Modelo</title>
+<title>Abordagem Alternativa para a Classificação de Posições</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -132,11 +132,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">AED</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./modelo.html" aria-current="page"> 
+    <a class="nav-link" href="./modelo.html"> 
 <span class="menu-text">Modelagem</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./modelo2.html"> 
+    <a class="nav-link active" href="./modelo2.html" aria-current="page"> 
 <span class="menu-text">Modelagem Alternativa</span></a>
   </li>  
   <li class="nav-item">
@@ -167,15 +167,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Nesta página</h2>
    
   <ul>
-  <li><a href="#preparação-dos-dados" id="toc-preparação-dos-dados" class="nav-link active" data-scroll-target="#preparação-dos-dados"><span class="header-section-number">1</span> Preparação dos Dados</a></li>
-  <li><a href="#feature-engineering-e-ajuste-do-modelo" id="toc-feature-engineering-e-ajuste-do-modelo" class="nav-link" data-scroll-target="#feature-engineering-e-ajuste-do-modelo"><span class="header-section-number">2</span> Feature Engineering e Ajuste do Modelo</a>
+  <li><a href="#motivação-da-segunda-modelagem" id="toc-motivação-da-segunda-modelagem" class="nav-link active" data-scroll-target="#motivação-da-segunda-modelagem"><span class="header-section-number">1</span> Motivação da Segunda Modelagem</a></li>
+  <li><a href="#definição-da-variável-resposta" id="toc-definição-da-variável-resposta" class="nav-link" data-scroll-target="#definição-da-variável-resposta"><span class="header-section-number">2</span> Definição da Variável Resposta</a>
   <ul class="collapse">
-  <li><a href="#objetivo-da-feature-engineering" id="toc-objetivo-da-feature-engineering" class="nav-link" data-scroll-target="#objetivo-da-feature-engineering"><span class="header-section-number">2.1</span> Objetivo da Feature Engineering</a></li>
-  <li><a href="#pré-processamento" id="toc-pré-processamento" class="nav-link" data-scroll-target="#pré-processamento"><span class="header-section-number">2.2</span> Pré-Processamento</a></li>
-  <li><a href="#conjunto-de-validação" id="toc-conjunto-de-validação" class="nav-link" data-scroll-target="#conjunto-de-validação"><span class="header-section-number">2.3</span> Conjunto de Validação</a></li>
-  <li><a href="#otimização-de-hiperparâmetros" id="toc-otimização-de-hiperparâmetros" class="nav-link" data-scroll-target="#otimização-de-hiperparâmetros"><span class="header-section-number">2.4</span> Otimização de Hiperparâmetros</a></li>
+  <li><a href="#conceito-de-backcourt-e-frontcourt" id="toc-conceito-de-backcourt-e-frontcourt" class="nav-link" data-scroll-target="#conceito-de-backcourt-e-frontcourt"><span class="header-section-number">2.1</span> Conceito de Backcourt e Frontcourt</a></li>
+  <li><a href="#construção-da-variável" id="toc-construção-da-variável" class="nav-link" data-scroll-target="#construção-da-variável"><span class="header-section-number">2.2</span> Construção da Variável</a></li>
   </ul></li>
-  <li><a href="#avaliação-dos-modelos-no-conjunto-de-teste" id="toc-avaliação-dos-modelos-no-conjunto-de-teste" class="nav-link" data-scroll-target="#avaliação-dos-modelos-no-conjunto-de-teste"><span class="header-section-number">3</span> Avaliação dos modelos no conjunto de teste</a></li>
+  <li><a href="#preparação-dos-dados-com-a-nova-variável" id="toc-preparação-dos-dados-com-a-nova-variável" class="nav-link" data-scroll-target="#preparação-dos-dados-com-a-nova-variável"><span class="header-section-number">3</span> Preparação dos Dados Com a Nova Variável</a></li>
+  <li><a href="#ajuste-do-modelo" id="toc-ajuste-do-modelo" class="nav-link" data-scroll-target="#ajuste-do-modelo"><span class="header-section-number">4</span> Ajuste do Modelo</a>
+  <ul class="collapse">
+  <li><a href="#pré-processamento" id="toc-pré-processamento" class="nav-link" data-scroll-target="#pré-processamento"><span class="header-section-number">4.1</span> Pré-Processamento</a></li>
+  <li><a href="#conjunto-de-validação" id="toc-conjunto-de-validação" class="nav-link" data-scroll-target="#conjunto-de-validação"><span class="header-section-number">4.2</span> Conjunto de Validação</a></li>
+  <li><a href="#otimização-de-hiperparâmetros" id="toc-otimização-de-hiperparâmetros" class="nav-link" data-scroll-target="#otimização-de-hiperparâmetros"><span class="header-section-number">4.3</span> Otimização de Hiperparâmetros</a></li>
+  </ul></li>
+  <li><a href="#avaliação-dos-modelos-no-conjunto-de-teste" id="toc-avaliação-dos-modelos-no-conjunto-de-teste" class="nav-link" data-scroll-target="#avaliação-dos-modelos-no-conjunto-de-teste"><span class="header-section-number">5</span> Avaliação dos modelos no conjunto de teste</a></li>
   </ul>
 </nav>
     </div>
@@ -184,7 +189,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Ajuste e Avaliação do Modelo</h1>
+<h1 class="title">Abordagem Alternativa para a Classificação de Posições</h1>
 </div>
 
 
@@ -201,183 +206,173 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="preparação-dos-dados" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="preparação-dos-dados"><span class="header-section-number">1</span> Preparação dos Dados</h2>
+<section id="motivação-da-segunda-modelagem" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="motivação-da-segunda-modelagem"><span class="header-section-number">1</span> Motivação da Segunda Modelagem</h2>
+</section>
+<section id="definição-da-variável-resposta" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="definição-da-variável-resposta"><span class="header-section-number">2</span> Definição da Variável Resposta</h2>
+<section id="conceito-de-backcourt-e-frontcourt" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="conceito-de-backcourt-e-frontcourt"><span class="header-section-number">2.1</span> Conceito de Backcourt e Frontcourt</h3>
+<p>No contexto deste estudo, os jogadores são classificados de acordo com sua função predominante em quadra:</p>
+<ul>
+<li><p><strong>Backcourt</strong>: jogadores com maior responsabilidade na condução de bola, criação ofensiva e organização do jogo, tipicamente associados às posições de armador (PG) e ala-armador (SG).</p></li>
+<li><p><strong>Frontcourt</strong>: jogadores com atuação predominante próxima à cesta, maior presença física e participação em ações como rebotes e proteção de aro, geralmente associados às posições de ala (SF), ala-pivô (PF) e pivô (C).</p></li>
+</ul>
+<p>Essa distinção prioriza aspectos funcionais em detrimento de rótulos posicionais rígidos.</p>
+</section>
+<section id="construção-da-variável" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="construção-da-variável"><span class="header-section-number">2.2</span> Construção da Variável</h3>
+<p>A variável resposta foi construída a partir da posição original do jogador, utilizando a seguinte regra de mapeamento:</p>
+<ul>
+<li>PG e SG → Backcourt<br>
+</li>
+<li>SF, PF e C → Frontcourt</li>
+</ul>
+<p>Essa transformação permite reestruturar o problema de classificação em um cenário binário, mantendo coerência com o papel desempenhado pelos atletas em quadra.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dados_analise <span class="ot">&lt;-</span> dados_analise <span class="sc">%&gt;%</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Court =</span> <span class="fu">factor</span>(<span class="fu">case_when</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      Position <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"PG"</span>, <span class="st">"SG"</span>) <span class="sc">~</span> <span class="st">"Backcourt"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      Position <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"SF"</span>, <span class="st">"PF"</span>, <span class="st">"C"</span>) <span class="sc">~</span> <span class="st">"Frontcourt"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Position)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="preparação-dos-dados-com-a-nova-variável" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="preparação-dos-dados-com-a-nova-variável"><span class="header-section-number">3</span> Preparação dos Dados Com a Nova Variável</h2>
 <ul>
 <li>Divisão: 70% treino e 30% teste</li>
-<li>Variável resposta: <strong>Position</strong></li>
+<li>Variável resposta: <strong>Court</strong></li>
 </ul>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">16723</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>dados_analise_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(dados_analise, <span class="at">prop =</span> .<span class="dv">7</span>, <span class="at">strata =</span> Position)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> <span class="fu">training</span>(dados_analise_split)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> <span class="fu">testing</span>(dados_analise_split)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">16723</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dados_analise_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(dados_analise, <span class="at">prop =</span> .<span class="dv">7</span>, <span class="at">strata =</span> Court)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> <span class="fu">training</span>(dados_analise_split)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> <span class="fu">testing</span>(dados_analise_split)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="feature-engineering-e-ajuste-do-modelo" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="feature-engineering-e-ajuste-do-modelo"><span class="header-section-number">2</span> Feature Engineering e Ajuste do Modelo</h2>
-<section id="objetivo-da-feature-engineering" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="objetivo-da-feature-engineering"><span class="header-section-number">2.1</span> Objetivo da Feature Engineering</h3>
-<ul>
-<li>Melhorar a capacidade preditiva do modelo</li>
-<li>Representar de forma mais fiel os papéis funcionais desempenhados pelos atletas em quadra</li>
-<li>Melhorar a separabilidade entre posições híbridas</li>
-</ul>
-<section id="ast_tov_ratio" class="level4" data-number="2.1.1">
-<h4 data-number="2.1.1" class="anchored" data-anchor-id="ast_tov_ratio"><span class="header-section-number">2.1.1</span> AST_TOV_RATIO</h4>
-<ul>
-<li>Definido como a razão entre as assistências (AST) e turnovers (TOV).</li>
-<li>Mede a eficiência na tomada de decisão e no controle da posse de bola.</li>
-<li>Amplamente utilizada para avaliação de organizadores ofensivos.</li>
-<li>O uso do <strong>0.1</strong> evita a divisão por zero.</li>
-</ul>
-</section>
-<section id="reb_heigth_inter" class="level4" data-number="2.1.2">
-<h4 data-number="2.1.2" class="anchored" data-anchor-id="reb_heigth_inter"><span class="header-section-number">2.1.2</span> REB_HEIGTH_INTER</h4>
-<ul>
-<li>Interação entre os rebotes e a altura do jogador</li>
-<li>Diferencia jogadores altos dominantes no rebote de jogadores altos pouco eficientes</li>
-<li>Permite identificar reboteadores eficientes independentemente da altura</li>
-</ul>
-</section>
-<section id="playmaker_score" class="level4" data-number="2.1.3">
-<h4 data-number="2.1.3" class="anchored" data-anchor-id="playmaker_score"><span class="header-section-number">2.1.3</span> PLAYMAKER_SCORE</h4>
-<ul>
-<li>Calculada como a diferença entre as versões padronizadas de AST e TOV.</li>
-<li>Distingue criadores eficientes de jogadores propensos a erros.</li>
-<li>Relevante para armadores e alas com função de criação.</li>
-</ul>
-</section>
-<section id="rim_protect" class="level4" data-number="2.1.4">
-<h4 data-number="2.1.4" class="anchored" data-anchor-id="rim_protect"><span class="header-section-number">2.1.4</span> RIM_PROTECT</h4>
-<ul>
-<li>Indicador composto de presença defensiva no garrafão.</li>
-<li>Combina controle de rebotes e proteção de cesta</li>
-<li>Característico de pivôs e alas-pivôs defensivos</li>
-</ul>
-</section>
-<section id="pts_eff" class="level4" data-number="2.1.5">
-<h4 data-number="2.1.5" class="anchored" data-anchor-id="pts_eff"><span class="header-section-number">2.1.5</span> PTS_EFF</h4>
-<ul>
-<li>Representa pontuação ajustada pela eficiência de arremesso</li>
-<li>Penaliza volume ofensivo ineficiente</li>
-<li>Distingue scorers eficientes de scorers de alto volume e baixo aproveitamento</li>
-</ul>
-</section>
-</section>
-<section id="pré-processamento" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="pré-processamento"><span class="header-section-number">2.2</span> Pré-Processamento</h3>
+<section id="ajuste-do-modelo" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="ajuste-do-modelo"><span class="header-section-number">4</span> Ajuste do Modelo</h2>
+<p>Utilizando os mesmos <em>feature engineering</em> do primeiro modelo</p>
+<section id="pré-processamento" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="pré-processamento"><span class="header-section-number">4.1</span> Pré-Processamento</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dados_analise_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(Position <span class="sc">~</span> ., <span class="at">data =</span> train_data) <span class="sc">|&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate</span>(</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">AST_TOV_RATIO =</span> AST <span class="sc">/</span> (TOV <span class="sc">+</span> <span class="fl">0.1</span>),</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">REB_HEIGHT_INTER =</span> REB <span class="sc">*</span> Altura,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">PLAYMAKER_SCORE =</span> AST <span class="sc">-</span> TOV,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">RIM_PROTECT =</span> REB <span class="sc">+</span> BLK,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">PTS_EFF =</span> PTS <span class="sc">*</span> FG_PCT) <span class="sc">|&gt;</span>  </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_YeoJohnson</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span> <span class="co"># Transformação Yeo-Johnson</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span> <span class="co"># normaliza variáveis numéricas para terem média 0 e variância 1</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_corr</span>(<span class="fu">all_numeric_predictors</span>(), <span class="at">threshold =</span> <span class="fl">0.8</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="st">"spearman"</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="co"># remove preditores que tenham alta correlação com algum outro preditor</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dados_analise_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(Court <span class="sc">~</span> ., <span class="at">data =</span> train_data) <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">AST_TOV_RATIO =</span> AST <span class="sc">/</span> (TOV <span class="sc">+</span> <span class="fl">0.1</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">REB_HEIGHT_INTER =</span> REB <span class="sc">*</span> Altura,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">PLAYMAKER_SCORE =</span> AST <span class="sc">-</span> TOV,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">RIM_PROTECT =</span> REB <span class="sc">+</span> BLK,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">PTS_EFF =</span> PTS <span class="sc">*</span> FG_PCT) <span class="sc">|&gt;</span>  </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_YeoJohnson</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span> <span class="co"># Transformação Yeo-Johnson</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span> <span class="co"># normaliza variáveis numéricas para terem média 0 e variância 1</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_corr</span>(<span class="fu">all_numeric_predictors</span>(), <span class="at">threshold =</span> <span class="fl">0.8</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="st">"spearman"</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="co"># remove preditores que tenham alta correlação com algum outro preditor</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>prepped_data <span class="ot">&lt;-</span> dados_analise_rec <span class="sc">|&gt;</span> <span class="co"># usa a receita</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>() <span class="sc">|&gt;</span> <span class="co"># aplica a receita no conjunto de treinamento</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">juice</span>()<span class="co"># extrai apenas o dataframe preprocessado</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>prepped_data <span class="ot">&lt;-</span> dados_analise_rec <span class="sc">|&gt;</span> <span class="co"># usa a receita</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>() <span class="sc">|&gt;</span> <span class="co"># aplica a receita no conjunto de treinamento</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">juice</span>()<span class="co"># extrai apenas o dataframe preprocessado</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="conjunto-de-validação" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="conjunto-de-validação"><span class="header-section-number">2.3</span> Conjunto de Validação</h3>
+<section id="conjunto-de-validação" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="conjunto-de-validação"><span class="header-section-number">4.2</span> Conjunto de Validação</h3>
 <p>Utilizando o método <em>k-fold cross validation</em> para construir um conjunto de validação com <em>k-folds</em>. Considerando <em>k = 10</em>.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cv_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(train_data, <span class="at">v =</span> <span class="dv">10</span>, <span class="at">strata =</span> Position)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cv_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(train_data, <span class="at">v =</span> <span class="dv">10</span>, <span class="at">strata =</span> Court)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="otimização-de-hiperparâmetros" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="otimização-de-hiperparâmetros"><span class="header-section-number">2.4</span> Otimização de Hiperparâmetros</h3>
+<section id="otimização-de-hiperparâmetros" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="otimização-de-hiperparâmetros"><span class="header-section-number">4.3</span> Otimização de Hiperparâmetros</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>knn_spec <span class="ot">&lt;-</span> <span class="fu">nearest_neighbor</span>(<span class="at">neighbors =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> <span class="co"># K-NN</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"kknn"</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>nbayes_spec <span class="ot">&lt;-</span> <span class="fu">naive_Bayes</span>() <span class="sc">%&gt;%</span> <span class="co"># Naive Bayes</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"naivebayes"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>multinom_spec <span class="ot">&lt;-</span> <span class="fu">multinom_reg</span>() <span class="sc">%&gt;%</span> <span class="co"># Reg Multinominal</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"nnet"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>lda_spec <span class="ot">&lt;-</span> <span class="fu">discrim_linear</span>() <span class="sc">%&gt;%</span> <span class="co"># Linear discriminant analysis</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"MASS"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>qda_spec <span class="ot">&lt;-</span> <span class="fu">discrim_quad</span>() <span class="sc">%&gt;%</span> <span class="co"># Quadratic discriminant analysis</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"MASS"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>knn_spec <span class="ot">&lt;-</span> <span class="fu">nearest_neighbor</span>(<span class="at">neighbors =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> <span class="co"># K-NN</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"kknn"</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>nbayes_spec <span class="ot">&lt;-</span> <span class="fu">naive_Bayes</span>() <span class="sc">%&gt;%</span> <span class="co"># Naive Bayes</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"naivebayes"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>logistic_spec <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span> <span class="co"># RL</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="at">engine =</span> <span class="st">"glm"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>lda_spec <span class="ot">&lt;-</span> <span class="fu">discrim_linear</span>() <span class="sc">%&gt;%</span> <span class="co"># Linear discriminant analysis</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"MASS"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>qda_spec <span class="ot">&lt;-</span> <span class="fu">discrim_quad</span>() <span class="sc">%&gt;%</span> <span class="co"># Quadratic discriminant analysis</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"MASS"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wf <span class="ot">=</span> <span class="fu">workflow_set</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">preproc =</span> <span class="fu">list</span>(dados_analise_rec),</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">models =</span> <span class="fu">list</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">knn_fit =</span> knn_spec,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">nbayes_fit =</span> nbayes_spec,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">linear_fit =</span> multinom_spec,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">lda_fit =</span> lda_spec,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">qda_fit =</span> qda_spec</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wflow_id =</span> <span class="fu">gsub</span>(<span class="st">"(recipe_)"</span>, <span class="st">""</span>, wflow_id))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>wf <span class="ot">=</span> <span class="fu">workflow_set</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">preproc =</span> <span class="fu">list</span>(dados_analise_rec),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">models =</span> <span class="fu">list</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">knn_fit =</span> knn_spec,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">nbayes_fit =</span> nbayes_spec,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">linear_fit =</span> logistic_spec,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">lda_fit =</span> lda_spec,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">qda_fit =</span> qda_spec</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">wflow_id =</span> <span class="fu">gsub</span>(<span class="st">"(recipe_)"</span>, <span class="st">""</span>, wflow_id))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>grid_ctrl <span class="ot">=</span> <span class="fu">control_grid</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_pred =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_over =</span> <span class="st">"resamples"</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_workflow =</span> <span class="cn">TRUE</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>grid_results <span class="ot">=</span> wf <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_map</span>(</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">16723</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> cv_folds,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">10</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> grid_ctrl</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>grid_ctrl <span class="ot">=</span> <span class="fu">control_grid</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_pred =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_over =</span> <span class="st">"resamples"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_workflow =</span> <span class="cn">TRUE</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>grid_results <span class="ot">=</span> wf <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_map</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">16723</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> cv_folds,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">10</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> grid_ctrl</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Usando a acurácia no conjunto de validão de acordo com o melhor conjunto de hiperparâmetros obtido para cada modelo.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(grid_results, <span class="at">metric =</span> <span class="st">"accuracy"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(grid_results, <span class="at">metric =</span> <span class="st">"accuracy"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="modelo_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="modelo2_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -386,12 +381,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(grid_results, <span class="at">select_best =</span> <span class="cn">TRUE</span> ,<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(grid_results, <span class="at">select_best =</span> <span class="cn">TRUE</span> ,<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="modelo_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="modelo2_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -400,12 +395,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(grid_results)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(grid_results)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="modelo_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="modelo2_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -414,31 +409,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>results_acc <span class="ot">=</span> workflowsets<span class="sc">::</span><span class="fu">rank_results</span>(grid_results,</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">select_best =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">rank_metric =</span> <span class="st">"accuracy"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"accuracy"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(wflow_id, mean, std_err, model, rank)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>results_acc <span class="sc">%&gt;%</span> <span class="fu">gt</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>results_acc <span class="ot">=</span> workflowsets<span class="sc">::</span><span class="fu">rank_results</span>(grid_results,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">select_best =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">rank_metric =</span> <span class="st">"accuracy"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"accuracy"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(wflow_id, mean, std_err, model, rank)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>results_acc <span class="sc">%&gt;%</span> <span class="fu">gt</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="rsbtymphdr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#rsbtymphdr table {
+<div id="gnwtxitrnc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gnwtxitrnc table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#rsbtymphdr thead, #rsbtymphdr tbody, #rsbtymphdr tfoot, #rsbtymphdr tr, #rsbtymphdr td, #rsbtymphdr th {
+#gnwtxitrnc thead, #gnwtxitrnc tbody, #gnwtxitrnc tfoot, #gnwtxitrnc tr, #gnwtxitrnc td, #gnwtxitrnc th {
   border-style: none;
 }
 
-#rsbtymphdr p {
+#gnwtxitrnc p {
   margin: 0;
   padding: 0;
 }
 
-#rsbtymphdr .gt_table {
+#gnwtxitrnc .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -464,12 +459,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_caption {
+#gnwtxitrnc .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#rsbtymphdr .gt_title {
+#gnwtxitrnc .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -481,7 +476,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#rsbtymphdr .gt_subtitle {
+#gnwtxitrnc .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -493,7 +488,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#rsbtymphdr .gt_heading {
+#gnwtxitrnc .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -505,13 +500,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_bottom_border {
+#gnwtxitrnc .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_col_headings {
+#gnwtxitrnc .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -526,7 +521,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_col_heading {
+#gnwtxitrnc .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -546,7 +541,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#rsbtymphdr .gt_column_spanner_outer {
+#gnwtxitrnc .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -558,15 +553,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#rsbtymphdr .gt_column_spanner_outer:first-child {
+#gnwtxitrnc .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rsbtymphdr .gt_column_spanner_outer:last-child {
+#gnwtxitrnc .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rsbtymphdr .gt_column_spanner {
+#gnwtxitrnc .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -578,11 +573,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#rsbtymphdr .gt_spanner_row {
+#gnwtxitrnc .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#rsbtymphdr .gt_group_heading {
+#gnwtxitrnc .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -608,7 +603,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#rsbtymphdr .gt_empty_group_heading {
+#gnwtxitrnc .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -623,15 +618,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#rsbtymphdr .gt_from_md > :first-child {
+#gnwtxitrnc .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rsbtymphdr .gt_from_md > :last-child {
+#gnwtxitrnc .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rsbtymphdr .gt_row {
+#gnwtxitrnc .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -650,7 +645,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#rsbtymphdr .gt_stub {
+#gnwtxitrnc .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -663,7 +658,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#rsbtymphdr .gt_stub_row_group {
+#gnwtxitrnc .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -677,15 +672,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#rsbtymphdr .gt_row_group_first td {
+#gnwtxitrnc .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#rsbtymphdr .gt_row_group_first th {
+#gnwtxitrnc .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#rsbtymphdr .gt_summary_row {
+#gnwtxitrnc .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -695,16 +690,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#rsbtymphdr .gt_first_summary_row {
+#gnwtxitrnc .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_first_summary_row.thick {
+#gnwtxitrnc .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#rsbtymphdr .gt_last_summary_row {
+#gnwtxitrnc .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -714,7 +709,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_grand_summary_row {
+#gnwtxitrnc .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -724,7 +719,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#rsbtymphdr .gt_first_grand_summary_row {
+#gnwtxitrnc .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -734,7 +729,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_last_grand_summary_row_top {
+#gnwtxitrnc .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -744,11 +739,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_striped {
+#gnwtxitrnc .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rsbtymphdr .gt_table_body {
+#gnwtxitrnc .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -757,7 +752,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_footnotes {
+#gnwtxitrnc .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -771,7 +766,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_footnote {
+#gnwtxitrnc .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -780,7 +775,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#rsbtymphdr .gt_sourcenotes {
+#gnwtxitrnc .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -794,7 +789,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#rsbtymphdr .gt_sourcenote {
+#gnwtxitrnc .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -802,72 +797,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#rsbtymphdr .gt_left {
+#gnwtxitrnc .gt_left {
   text-align: left;
 }
 
-#rsbtymphdr .gt_center {
+#gnwtxitrnc .gt_center {
   text-align: center;
 }
 
-#rsbtymphdr .gt_right {
+#gnwtxitrnc .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rsbtymphdr .gt_font_normal {
+#gnwtxitrnc .gt_font_normal {
   font-weight: normal;
 }
 
-#rsbtymphdr .gt_font_bold {
+#gnwtxitrnc .gt_font_bold {
   font-weight: bold;
 }
 
-#rsbtymphdr .gt_font_italic {
+#gnwtxitrnc .gt_font_italic {
   font-style: italic;
 }
 
-#rsbtymphdr .gt_super {
+#gnwtxitrnc .gt_super {
   font-size: 65%;
 }
 
-#rsbtymphdr .gt_footnote_marks {
+#gnwtxitrnc .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#rsbtymphdr .gt_asterisk {
+#gnwtxitrnc .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#rsbtymphdr .gt_indent_1 {
+#gnwtxitrnc .gt_indent_1 {
   text-indent: 5px;
 }
 
-#rsbtymphdr .gt_indent_2 {
+#gnwtxitrnc .gt_indent_2 {
   text-indent: 10px;
 }
 
-#rsbtymphdr .gt_indent_3 {
+#gnwtxitrnc .gt_indent_3 {
   text-indent: 15px;
 }
 
-#rsbtymphdr .gt_indent_4 {
+#gnwtxitrnc .gt_indent_4 {
   text-indent: 20px;
 }
 
-#rsbtymphdr .gt_indent_5 {
+#gnwtxitrnc .gt_indent_5 {
   text-indent: 25px;
 }
 
-#rsbtymphdr .katex-display {
+#gnwtxitrnc .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#rsbtymphdr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#gnwtxitrnc div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -884,37 +879,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody class="gt_table_body">
 <tr class="odd">
-<td class="gt_row gt_left" headers="wflow_id">linear_fit</td>
-<td class="gt_row gt_right" headers="mean">0.6434905</td>
-<td class="gt_row gt_right" headers="std_err">0.01344878</td>
-<td class="gt_row gt_left" headers="model">multinom_reg</td>
+<td class="gt_row gt_left" headers="wflow_id">lda_fit</td>
+<td class="gt_row gt_right" headers="mean">0.8978000</td>
+<td class="gt_row gt_right" headers="std_err">0.01606318</td>
+<td class="gt_row gt_left" headers="model">discrim_linear</td>
 <td class="gt_row gt_right" headers="rank">1</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="wflow_id">lda_fit</td>
-<td class="gt_row gt_right" headers="mean">0.6338649</td>
-<td class="gt_row gt_right" headers="std_err">0.01192029</td>
-<td class="gt_row gt_left" headers="model">discrim_linear</td>
+<td class="gt_row gt_left" headers="wflow_id">linear_fit</td>
+<td class="gt_row gt_right" headers="mean">0.8954164</td>
+<td class="gt_row gt_right" headers="std_err">0.01928389</td>
+<td class="gt_row gt_left" headers="model">logistic_reg</td>
 <td class="gt_row gt_right" headers="rank">2</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="wflow_id">knn_fit</td>
-<td class="gt_row gt_right" headers="mean">0.6163853</td>
-<td class="gt_row gt_right" headers="std_err">0.02392282</td>
-<td class="gt_row gt_left" headers="model">nearest_neighbor</td>
+<td class="gt_row gt_left" headers="wflow_id">nbayes_fit</td>
+<td class="gt_row gt_right" headers="mean">0.8905437</td>
+<td class="gt_row gt_right" headers="std_err">0.01111032</td>
+<td class="gt_row gt_left" headers="model">naive_Bayes</td>
 <td class="gt_row gt_right" headers="rank">3</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="wflow_id">nbayes_fit</td>
-<td class="gt_row gt_right" headers="mean">0.6119040</td>
-<td class="gt_row gt_right" headers="std_err">0.02155317</td>
-<td class="gt_row gt_left" headers="model">naive_Bayes</td>
+<td class="gt_row gt_left" headers="wflow_id">knn_fit</td>
+<td class="gt_row gt_right" headers="mean">0.8884977</td>
+<td class="gt_row gt_right" headers="std_err">0.01185536</td>
+<td class="gt_row gt_left" headers="model">nearest_neighbor</td>
 <td class="gt_row gt_right" headers="rank">4</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="wflow_id">qda_fit</td>
-<td class="gt_row gt_right" headers="mean">0.5363400</td>
-<td class="gt_row gt_right" headers="std_err">0.01901796</td>
+<td class="gt_row gt_right" headers="mean">0.8528226</td>
+<td class="gt_row gt_right" headers="std_err">0.01956599</td>
 <td class="gt_row gt_left" headers="model">discrim_quad</td>
 <td class="gt_row gt_right" headers="rank">5</td>
 </tr>
@@ -928,102 +923,102 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>best_set_linear <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"linear_fit"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>best_set_knn <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span> </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"knn_fit"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>best_set_nbayes <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"nbayes_fit"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>best_set_lda <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span> </span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"lda_fit"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>best_set_qda <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span> </span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"qda_fit"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>best_set_linear <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"linear_fit"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>best_set_knn <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"knn_fit"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>best_set_nbayes <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"nbayes_fit"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>best_set_lda <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span> </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"lda_fit"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>best_set_qda <span class="ot">=</span> grid_results <span class="sc">%&gt;%</span> </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(<span class="st">"qda_fit"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"accuracy"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 </section>
-<section id="avaliação-dos-modelos-no-conjunto-de-teste" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="avaliação-dos-modelos-no-conjunto-de-teste"><span class="header-section-number">3</span> Avaliação dos modelos no conjunto de teste</h2>
+<section id="avaliação-dos-modelos-no-conjunto-de-teste" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="avaliação-dos-modelos-no-conjunto-de-teste"><span class="header-section-number">5</span> Avaliação dos modelos no conjunto de teste</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>test_results <span class="ot">&lt;-</span> <span class="cf">function</span>(rc_rslts, fit_obj, par_set, split_obj) {</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> rc_rslts <span class="sc">%&gt;%</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">extract_workflow</span>(fit_obj) <span class="sc">%&gt;%</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">finalize_workflow</span>(par_set) <span class="sc">%&gt;%</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">last_fit</span>(<span class="at">split =</span> split_obj,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">metrics =</span> <span class="fu">metric_set</span>(</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>               accuracy,roc_auc,</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>               f_meas,precision,</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>               recall,spec,kap))</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  res</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>test_results <span class="ot">&lt;-</span> <span class="cf">function</span>(rc_rslts, fit_obj, par_set, split_obj) {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> rc_rslts <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">extract_workflow</span>(fit_obj) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">finalize_workflow</span>(par_set) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">last_fit</span>(<span class="at">split =</span> split_obj,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">metrics =</span> <span class="fu">metric_set</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>               accuracy,roc_auc,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>               f_meas,precision,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>               recall,spec,kap))</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  res</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>test_results_linear <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"linear_fit"</span>,best_set_linear,dados_analise_split)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>test_results_knn <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"knn_fit"</span>,best_set_knn,dados_analise_split)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>test_results_nbayes <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"nbayes_fit"</span>,best_set_nbayes,dados_analise_split)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>test_results_lda <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"lda_fit"</span>,best_set_lda,dados_analise_split)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>test_results_qda <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"qda_fit"</span>,best_set_qda,dados_analise_split)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>test_results_linear <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"linear_fit"</span>,best_set_linear,dados_analise_split)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>test_results_knn <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"knn_fit"</span>,best_set_knn,dados_analise_split)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>test_results_nbayes <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"nbayes_fit"</span>,best_set_nbayes,dados_analise_split)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>test_results_lda <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"lda_fit"</span>,best_set_lda,dados_analise_split)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>test_results_qda <span class="ot">=</span> <span class="fu">test_results</span>(grid_results,<span class="st">"qda_fit"</span>,best_set_qda,dados_analise_split)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">=</span> <span class="fu">rbind</span>(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_linear)<span class="sc">$</span>.estimate,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_knn)<span class="sc">$</span>.estimate,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_nbayes)<span class="sc">$</span>.estimate,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_lda)<span class="sc">$</span>.estimate,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_qda)<span class="sc">$</span>.estimate</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">&lt;-</span> <span class="fu">round</span>(metrics_table, <span class="dv">4</span>)</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>rnms <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"multi_reg"</span>,<span class="st">"k_nn"</span>,<span class="st">"naive_bayes"</span>, <span class="st">"lin_discr"</span>,<span class="st">"quad_discr"</span>)</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">&lt;-</span> <span class="fu">cbind</span>(rnms, metrics_table)</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">&lt;-</span> metrics_table <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">as_tibble</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">=</span> <span class="fu">rbind</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_linear)<span class="sc">$</span>.estimate,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_knn)<span class="sc">$</span>.estimate,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_nbayes)<span class="sc">$</span>.estimate,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_lda)<span class="sc">$</span>.estimate,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(test_results_qda)<span class="sc">$</span>.estimate</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">&lt;-</span> <span class="fu">round</span>(metrics_table, <span class="dv">4</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>rnms <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"logistic_reg"</span>,<span class="st">"k_nn"</span>,<span class="st">"naive_bayes"</span>, <span class="st">"lin_discr"</span>,<span class="st">"quad_discr"</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">&lt;-</span> <span class="fu">cbind</span>(rnms, metrics_table)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">&lt;-</span> metrics_table <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">as_tibble</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(metrics_table) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"method"</span>,<span class="st">"acc"</span>,<span class="st">"roc_auc"</span>,<span class="st">"f_meas"</span>,</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"precision"</span>,<span class="st">"recall"</span>,<span class="st">"spec"</span>,<span class="st">"kappa"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(metrics_table) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"method"</span>,<span class="st">"acc"</span>,<span class="st">"roc_auc"</span>,<span class="st">"f_meas"</span>,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"precision"</span>,<span class="st">"recall"</span>,<span class="st">"spec"</span>,<span class="st">"kappa"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Mostrar código</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(acc),<span class="fu">desc</span>(roc_auc),<span class="fu">desc</span>(f_meas),<span class="fu">desc</span>(kappa)) <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(acc),<span class="fu">desc</span>(roc_auc),<span class="fu">desc</span>(f_meas),<span class="fu">desc</span>(kappa)) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="qrwdojaruj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#qrwdojaruj table {
+<div id="ntuvkamlxe" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ntuvkamlxe table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#qrwdojaruj thead, #qrwdojaruj tbody, #qrwdojaruj tfoot, #qrwdojaruj tr, #qrwdojaruj td, #qrwdojaruj th {
+#ntuvkamlxe thead, #ntuvkamlxe tbody, #ntuvkamlxe tfoot, #ntuvkamlxe tr, #ntuvkamlxe td, #ntuvkamlxe th {
   border-style: none;
 }
 
-#qrwdojaruj p {
+#ntuvkamlxe p {
   margin: 0;
   padding: 0;
 }
 
-#qrwdojaruj .gt_table {
+#ntuvkamlxe .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1049,12 +1044,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_caption {
+#ntuvkamlxe .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#qrwdojaruj .gt_title {
+#ntuvkamlxe .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1066,7 +1061,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#qrwdojaruj .gt_subtitle {
+#ntuvkamlxe .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1078,7 +1073,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#qrwdojaruj .gt_heading {
+#ntuvkamlxe .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1090,13 +1085,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_bottom_border {
+#ntuvkamlxe .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_col_headings {
+#ntuvkamlxe .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1111,7 +1106,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_col_heading {
+#ntuvkamlxe .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1131,7 +1126,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#qrwdojaruj .gt_column_spanner_outer {
+#ntuvkamlxe .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1143,15 +1138,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#qrwdojaruj .gt_column_spanner_outer:first-child {
+#ntuvkamlxe .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#qrwdojaruj .gt_column_spanner_outer:last-child {
+#ntuvkamlxe .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#qrwdojaruj .gt_column_spanner {
+#ntuvkamlxe .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1163,11 +1158,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#qrwdojaruj .gt_spanner_row {
+#ntuvkamlxe .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#qrwdojaruj .gt_group_heading {
+#ntuvkamlxe .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1193,7 +1188,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#qrwdojaruj .gt_empty_group_heading {
+#ntuvkamlxe .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1208,15 +1203,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#qrwdojaruj .gt_from_md > :first-child {
+#ntuvkamlxe .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#qrwdojaruj .gt_from_md > :last-child {
+#ntuvkamlxe .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#qrwdojaruj .gt_row {
+#ntuvkamlxe .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1235,7 +1230,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#qrwdojaruj .gt_stub {
+#ntuvkamlxe .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1248,7 +1243,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#qrwdojaruj .gt_stub_row_group {
+#ntuvkamlxe .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1262,15 +1257,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#qrwdojaruj .gt_row_group_first td {
+#ntuvkamlxe .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#qrwdojaruj .gt_row_group_first th {
+#ntuvkamlxe .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#qrwdojaruj .gt_summary_row {
+#ntuvkamlxe .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1280,16 +1275,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#qrwdojaruj .gt_first_summary_row {
+#ntuvkamlxe .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_first_summary_row.thick {
+#ntuvkamlxe .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#qrwdojaruj .gt_last_summary_row {
+#ntuvkamlxe .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1299,7 +1294,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_grand_summary_row {
+#ntuvkamlxe .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1309,7 +1304,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#qrwdojaruj .gt_first_grand_summary_row {
+#ntuvkamlxe .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1319,7 +1314,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_last_grand_summary_row_top {
+#ntuvkamlxe .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1329,11 +1324,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_striped {
+#ntuvkamlxe .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#qrwdojaruj .gt_table_body {
+#ntuvkamlxe .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1342,7 +1337,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_footnotes {
+#ntuvkamlxe .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1356,7 +1351,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_footnote {
+#ntuvkamlxe .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1365,7 +1360,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#qrwdojaruj .gt_sourcenotes {
+#ntuvkamlxe .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1379,7 +1374,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#qrwdojaruj .gt_sourcenote {
+#ntuvkamlxe .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1387,72 +1382,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#qrwdojaruj .gt_left {
+#ntuvkamlxe .gt_left {
   text-align: left;
 }
 
-#qrwdojaruj .gt_center {
+#ntuvkamlxe .gt_center {
   text-align: center;
 }
 
-#qrwdojaruj .gt_right {
+#ntuvkamlxe .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#qrwdojaruj .gt_font_normal {
+#ntuvkamlxe .gt_font_normal {
   font-weight: normal;
 }
 
-#qrwdojaruj .gt_font_bold {
+#ntuvkamlxe .gt_font_bold {
   font-weight: bold;
 }
 
-#qrwdojaruj .gt_font_italic {
+#ntuvkamlxe .gt_font_italic {
   font-style: italic;
 }
 
-#qrwdojaruj .gt_super {
+#ntuvkamlxe .gt_super {
   font-size: 65%;
 }
 
-#qrwdojaruj .gt_footnote_marks {
+#ntuvkamlxe .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#qrwdojaruj .gt_asterisk {
+#ntuvkamlxe .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#qrwdojaruj .gt_indent_1 {
+#ntuvkamlxe .gt_indent_1 {
   text-indent: 5px;
 }
 
-#qrwdojaruj .gt_indent_2 {
+#ntuvkamlxe .gt_indent_2 {
   text-indent: 10px;
 }
 
-#qrwdojaruj .gt_indent_3 {
+#ntuvkamlxe .gt_indent_3 {
   text-indent: 15px;
 }
 
-#qrwdojaruj .gt_indent_4 {
+#ntuvkamlxe .gt_indent_4 {
   text-indent: 20px;
 }
 
-#qrwdojaruj .gt_indent_5 {
+#ntuvkamlxe .gt_indent_5 {
   text-indent: 25px;
 }
 
-#qrwdojaruj .katex-display {
+#ntuvkamlxe .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#qrwdojaruj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#ntuvkamlxe div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1472,54 +1467,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody class="gt_table_body">
 <tr class="odd">
-<td class="gt_row gt_left" headers="method">multi_reg</td>
-<td class="gt_row gt_right" headers="acc">0.6848</td>
-<td class="gt_row gt_right" headers="roc_auc">0.6888</td>
-<td class="gt_row gt_right" headers="f_meas">0.6954</td>
-<td class="gt_row gt_right" headers="precision">0.6861</td>
-<td class="gt_row gt_right" headers="recall">0.9201</td>
-<td class="gt_row gt_right" headers="spec">0.6029</td>
-<td class="gt_row gt_right" headers="kappa">0.9127</td>
+<td class="gt_row gt_left" headers="method">lin_discr</td>
+<td class="gt_row gt_right" headers="acc">0.8962</td>
+<td class="gt_row gt_right" headers="roc_auc">0.8834</td>
+<td class="gt_row gt_right" headers="f_meas">0.878</td>
+<td class="gt_row gt_right" headers="precision">0.8889</td>
+<td class="gt_row gt_right" headers="recall">0.902</td>
+<td class="gt_row gt_right" headers="spec">0.7898</td>
+<td class="gt_row gt_right" headers="kappa">0.9614</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="method">lin_discr</td>
-<td class="gt_row gt_right" headers="acc">0.6685</td>
-<td class="gt_row gt_right" headers="roc_auc">0.6638</td>
-<td class="gt_row gt_right" headers="f_meas">0.6718</td>
-<td class="gt_row gt_right" headers="precision">0.6699</td>
-<td class="gt_row gt_right" headers="recall">0.9166</td>
-<td class="gt_row gt_right" headers="spec">0.5834</td>
-<td class="gt_row gt_right" headers="kappa">0.916</td>
+<td class="gt_row gt_left" headers="method">logistic_reg</td>
+<td class="gt_row gt_right" headers="acc">0.8852</td>
+<td class="gt_row gt_right" headers="roc_auc">0.8743</td>
+<td class="gt_row gt_right" headers="f_meas">0.8488</td>
+<td class="gt_row gt_right" headers="precision">0.9012</td>
+<td class="gt_row gt_right" headers="recall">0.8725</td>
+<td class="gt_row gt_right" headers="spec">0.7689</td>
+<td class="gt_row gt_right" headers="kappa">0.9541</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="method">naive_bayes</td>
-<td class="gt_row gt_right" headers="acc">0.625</td>
-<td class="gt_row gt_right" headers="roc_auc">0.613</td>
-<td class="gt_row gt_right" headers="f_meas">0.616</td>
-<td class="gt_row gt_right" headers="precision">0.6148</td>
-<td class="gt_row gt_right" headers="recall">0.9057</td>
-<td class="gt_row gt_right" headers="spec">0.5272</td>
-<td class="gt_row gt_right" headers="kappa">0.8958</td>
+<td class="gt_row gt_right" headers="acc">0.8798</td>
+<td class="gt_row gt_right" headers="roc_auc">0.8736</td>
+<td class="gt_row gt_right" headers="f_meas">0.8172</td>
+<td class="gt_row gt_right" headers="precision">0.9383</td>
+<td class="gt_row gt_right" headers="recall">0.8333</td>
+<td class="gt_row gt_right" headers="spec">0.76</td>
+<td class="gt_row gt_right" headers="kappa">0.9563</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="method">k_nn</td>
-<td class="gt_row gt_right" headers="acc">0.5978</td>
-<td class="gt_row gt_right" headers="roc_auc">0.5988</td>
-<td class="gt_row gt_right" headers="f_meas">0.6108</td>
-<td class="gt_row gt_right" headers="precision">0.5922</td>
-<td class="gt_row gt_right" headers="recall">0.8975</td>
-<td class="gt_row gt_right" headers="spec">0.4911</td>
-<td class="gt_row gt_right" headers="kappa">0.8873</td>
+<td class="gt_row gt_right" headers="acc">0.8306</td>
+<td class="gt_row gt_right" headers="roc_auc">0.8144</td>
+<td class="gt_row gt_right" headers="f_meas">0.7907</td>
+<td class="gt_row gt_right" headers="precision">0.8395</td>
+<td class="gt_row gt_right" headers="recall">0.8235</td>
+<td class="gt_row gt_right" headers="spec">0.6588</td>
+<td class="gt_row gt_right" headers="kappa">0.9319</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="method">quad_discr</td>
-<td class="gt_row gt_right" headers="acc">0.587</td>
-<td class="gt_row gt_right" headers="roc_auc">0.595</td>
-<td class="gt_row gt_right" headers="f_meas">0.5983</td>
-<td class="gt_row gt_right" headers="precision">0.5957</td>
-<td class="gt_row gt_right" headers="recall">0.8962</td>
-<td class="gt_row gt_right" headers="spec">0.4823</td>
-<td class="gt_row gt_right" headers="kappa">0.832</td>
+<td class="gt_row gt_right" headers="acc">0.8197</td>
+<td class="gt_row gt_right" headers="roc_auc">0.7975</td>
+<td class="gt_row gt_right" headers="f_meas">0.7927</td>
+<td class="gt_row gt_right" headers="precision">0.8025</td>
+<td class="gt_row gt_right" headers="recall">0.8333</td>
+<td class="gt_row gt_right" headers="spec">0.635</td>
+<td class="gt_row gt_right" headers="kappa">0.8901</td>
 </tr>
 </tbody>
 </table>

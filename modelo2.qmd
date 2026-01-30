@@ -1,5 +1,5 @@
 ---
-title: "Ajuste e Avaliação do Modelo"
+title: "Abordagem Alternativa para a Classificação de Posições"
 lang: pt
 message: false
 warning: false
@@ -40,82 +40,87 @@ dados_analise <- read.csv2("includes/nba.csv", sep = ";")
 
 dados_analise <- dados_analise |>
   mutate(
-    PTS = as.numeric(PTS),
-    AGE = as.numeric(AGE),
-    AST = as.numeric(AST),
-    REB = as.numeric(REB),
-    Position = as.factor(Position),
-    FG_PCT = as.numeric(FG_PCT),
-    FG3_PCT = as.numeric(FG3_PCT),
-    FT_PCT = as.numeric(FT_PCT)
+    across(c(PTS, AGE, AST, REB, TOV, BLK, FG_PCT, FG3_PCT, FT_PCT), as.numeric),
+    Position = as.factor(Position)
   ) |>
   dplyr::select(-TEAM_ABBREVIATION, -PLAYER_NAME)
+
+
 
 ```
 
 
-## Preparação dos Dados
+
+##  Motivação da Segunda Modelagem
+
+
+## Definição da Variável Resposta
+
+### Conceito de Backcourt e Frontcourt
+
+No contexto deste estudo, os jogadores são classificados de acordo com sua função predominante em quadra:
+
+- **Backcourt**: jogadores com maior responsabilidade na condução de bola, criação ofensiva e organização do jogo, tipicamente associados às posições de armador (PG) e ala-armador (SG).
+
+- **Frontcourt**: jogadores com atuação predominante próxima à cesta, maior presença física e participação em ações como rebotes e proteção de aro, geralmente associados às posições de ala (SF), ala-pivô (PF) e pivô (C).
+
+Essa distinção prioriza aspectos funcionais em detrimento de rótulos posicionais rígidos.
+
+### Construção da Variável
+
+A variável resposta foi construída a partir da posição original do jogador, utilizando a seguinte regra de mapeamento:
+
+- PG e SG → Backcourt  
+- SF, PF e C → Frontcourt  
+
+Essa transformação permite reestruturar o problema de classificação em um cenário binário, mantendo coerência com o papel desempenhado pelos atletas em quadra.
+
+
+
+```{r}
+
+dados_analise <- dados_analise %>%
+  mutate(
+    Court = factor(case_when(
+      Position %in% c("PG", "SG") ~ "Backcourt",
+      Position %in% c("SF", "PF", "C") ~ "Frontcourt",
+    )
+  )) |>
+  dplyr::select(-Position)
+
+
+
+```
+
+
+## Preparação dos Dados Com a Nova Variável
 
 - Divisão: 70% treino e 30% teste
-- Variável resposta: **Position**
+- Variável resposta: **Court**
 
 
 ```{r}
 
 set.seed(16723)
 
-dados_analise_split <- initial_split(dados_analise, prop = .7, strata = Position)
+dados_analise_split <- initial_split(dados_analise, prop = .7, strata = Court)
 train_data <- training(dados_analise_split)
 test_data <- testing(dados_analise_split)
 
+
 ```
 
-## Feature Engineering e Ajuste do Modelo
 
-### Objetivo da Feature Engineering
+## Ajuste do Modelo
 
-- Melhorar a capacidade preditiva do modelo
-- Representar de forma mais fiel os papéis funcionais desempenhados pelos atletas em quadra
-- Melhorar a separabilidade entre posições híbridas
+Utilizando os mesmos *feature engineering* do primeiro modelo
 
-#### AST_TOV_RATIO
-
-- Definido como a razão entre as assistências (AST) e turnovers (TOV).
-- Mede a eficiência na tomada de decisão e no controle da posse de bola.
-- Amplamente utilizada para avaliação de organizadores ofensivos.
-- O uso do **0.1** evita a divisão por zero.
-
-#### REB_HEIGTH_INTER
-
-- Interação entre os rebotes e a altura do jogador
-- Diferencia jogadores altos dominantes no rebote de jogadores altos pouco eficientes
-- Permite identificar reboteadores eficientes independentemente da altura
-
-
-#### PLAYMAKER_SCORE
-
-- Calculada como a diferença entre as versões padronizadas de AST e TOV.
-- Distingue criadores eficientes de jogadores propensos a erros.
-- Relevante para armadores e alas com função de criação.  
-
-
-#### RIM_PROTECT 
-
-- Indicador composto de presença defensiva no garrafão.
-- Combina controle de rebotes e proteção de cesta
-- Característico de pivôs e alas-pivôs defensivos
-
-#### PTS_EFF
-
-- Representa pontuação ajustada pela eficiência de arremesso
-- Penaliza volume ofensivo ineficiente
-- Distingue scorers eficientes de scorers de alto volume e baixo aproveitamento
 
 ### Pré-Processamento
 
 ```{r}
 
-dados_analise_rec <- recipe(Position ~ ., data = train_data) |>
+dados_analise_rec <- recipe(Court ~ ., data = train_data) |>
   
   step_mutate(
     AST_TOV_RATIO = AST / (TOV + 0.1),
@@ -148,7 +153,7 @@ Utilizando o método *k-fold cross validation* para construir um conjunto de val
 
 ```{r}
 
-cv_folds <- vfold_cv(train_data, v = 10, strata = Position)
+cv_folds <- vfold_cv(train_data, v = 10, strata = Court)
 
 ```
 
@@ -168,8 +173,8 @@ nbayes_spec <- naive_Bayes() %>% # Naive Bayes
   set_mode("classification")
 
 
-multinom_spec <- multinom_reg() %>% # Reg Multinominal
-  set_engine("nnet") %>% 
+logistic_spec <- logistic_reg() %>% # RL
+  set_engine(engine = "glm") %>%
   set_mode("classification")
 
 lda_spec <- discrim_linear() %>% # Linear discriminant analysis
@@ -190,7 +195,7 @@ wf = workflow_set(
   models = list(
     knn_fit = knn_spec,
     nbayes_fit = nbayes_spec,
-    linear_fit = multinom_spec,
+    linear_fit = logistic_spec,
     lda_fit = lda_spec,
     qda_fit = qda_spec
   )
@@ -321,7 +326,7 @@ metrics_table = rbind(
 )
 
 metrics_table <- round(metrics_table, 4)
-rnms = c("multi_reg","k_nn","naive_bayes", "lin_discr","quad_discr")
+rnms = c("logistic_reg","k_nn","naive_bayes", "lin_discr","quad_discr")
 metrics_table <- cbind(rnms, metrics_table)
 metrics_table <- metrics_table %>% dplyr::as_tibble()
 
@@ -346,8 +351,3 @@ metrics_table %>%
   gt()
 
 ```
-
-
-
-
-

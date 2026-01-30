@@ -187,5 +187,3 @@ corrplot(
 ```
 
 
-## Principais Insights da Análise Exploratória
-
