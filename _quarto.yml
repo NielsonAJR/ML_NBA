@@ -16,7 +16,6 @@ website:
         text: Modelagem
       - href: modelo2.qmd
         text: "Modelagem Alternativa"
-      - about.qmd
     right:
       - icon: github
         href: https://github.com/NielsonAJR/ML_NBA

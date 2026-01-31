@@ -139,10 +139,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link active" href="./modelo2.html" aria-current="page"> 
 <span class="menu-text">Modelagem Alternativa</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">Sobre</span></a>
-  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
@@ -208,6 +204,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="motivação-da-segunda-modelagem" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="motivação-da-segunda-modelagem"><span class="header-section-number">1</span> Motivação da Segunda Modelagem</h2>
+<ul>
+<li>Ambiguidade das posições tradicionais (ex.: SG/SF, SF/PF).</li>
+<li>Tendência do basquete moderno em classificar jogadores por função em quadra, e não apenas posição nominal.</li>
+<li>Hipótese de que a divisão <strong>Backcourt</strong> e <strong>Frontcourt</strong>: Reduz a sobreposição entre as classes, aumenta a estabilidade dos modelos, melhora aplicabilidade prática (rookie, small-ball).</li>
+</ul>
 </section>
 <section id="definição-da-variável-resposta" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="definição-da-variável-resposta"><span class="header-section-number">2</span> Definição da Variável Resposta</h2>
@@ -218,7 +219,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong>Backcourt</strong>: jogadores com maior responsabilidade na condução de bola, criação ofensiva e organização do jogo, tipicamente associados às posições de armador (PG) e ala-armador (SG).</p></li>
 <li><p><strong>Frontcourt</strong>: jogadores com atuação predominante próxima à cesta, maior presença física e participação em ações como rebotes e proteção de aro, geralmente associados às posições de ala (SF), ala-pivô (PF) e pivô (C).</p></li>
 </ul>
-<p>Essa distinção prioriza aspectos funcionais em detrimento de rótulos posicionais rígidos.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="includes/backcourt_frontcourt.png" class="img-fluid figure-img"></p>
+<figcaption>Backcourt e Frontcourt</figcaption>
+</figure>
+</div>
 </section>
 <section id="construção-da-variável" class="level3" data-number="2.2">
 <h3 data-number="2.2" class="anchored" data-anchor-id="construção-da-variável"><span class="header-section-number">2.2</span> Construção da Variável</h3>

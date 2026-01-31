@@ -258,22 +258,9 @@ dados_analise <- dados_basicos |>
                          "MJ Walker") ~ "SG",
       TRUE ~ "To_Map" 
     ),
-    PTS = as.numeric(PTS),
-    AGE = as.numeric(AGE),
-    AST = as.numeric(AST),
-    REB = as.numeric(REB),
-    Position = as.factor(Position),
-    FG_PCT = as.numeric(FG_PCT),
-    FG3_PCT = as.numeric(FG3_PCT),
-    FT_PCT = as.numeric(FT_PCT),
-    OREB = as.numeric(OREB),
-    DREB = as.numeric(DREB),
-    TOV = as.numeric(TOV),
-    STL = as.numeric(STL),
-    BLK = as.numeric(BLK),
-    Peso = as.numeric(Peso)
-  ) 
-
+    across(c(PTS, AGE, AST, REB, OREB, DREB ,TOV, BLK, FG_PCT, FG3_PCT, FT_PCT), as.numeric),
+    Position = as.factor(Position)
+    )
 
 # Facilitar carregamentos futuros
 dados_analise |> write.csv2("includes/nba.csv", row.names = FALSE)

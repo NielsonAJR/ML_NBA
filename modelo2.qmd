@@ -40,7 +40,7 @@ dados_analise <- read.csv2("includes/nba.csv", sep = ";")
 
 dados_analise <- dados_analise |>
   mutate(
-    across(c(PTS, AGE, AST, REB, TOV, BLK, FG_PCT, FG3_PCT, FT_PCT), as.numeric),
+    across(c(PTS, AGE, AST, REB, OREB, DREB ,TOV, BLK, FG_PCT, FG3_PCT, FT_PCT), as.numeric),
     Position = as.factor(Position)
   ) |>
   dplyr::select(-TEAM_ABBREVIATION, -PLAYER_NAME)
@@ -53,6 +53,10 @@ dados_analise <- dados_analise |>
 
 ##  Motivação da Segunda Modelagem
 
+- Ambiguidade das posições tradicionais (ex.: SG/SF, SF/PF).
+- Tendência do basquete moderno em classificar jogadores por função em quadra, e não apenas posição nominal.
+- Hipótese de que a divisão **Backcourt** e **Frontcourt**: Reduz a sobreposição entre as classes, aumenta a estabilidade dos modelos, melhora aplicabilidade prática (rookie, small-ball).
+
 
 ## Definição da Variável Resposta
 
@@ -64,7 +68,8 @@ No contexto deste estudo, os jogadores são classificados de acordo com sua fun�
 
 - **Frontcourt**: jogadores com atuação predominante próxima à cesta, maior presença física e participação em ações como rebotes e proteção de aro, geralmente associados às posições de ala (SF), ala-pivô (PF) e pivô (C).
 
-Essa distinção prioriza aspectos funcionais em detrimento de rótulos posicionais rígidos.
+
+![Backcourt e Frontcourt](includes/backcourt_frontcourt.png)
 
 ### Construção da Variável
 

@@ -39,15 +39,9 @@ dados_analise <- read.csv2("includes/nba.csv", sep = ";")
 
 dados_analise <- dados_analise |>
   mutate(
-    PTS = as.numeric(PTS),
-    AGE = as.numeric(AGE),
-    AST = as.numeric(AST),
-    REB = as.numeric(REB),
-    Position = as.factor(Position),
-    FG_PCT = as.numeric(FG_PCT),
-    FG3_PCT = as.numeric(FG3_PCT),
-    FT_PCT = as.numeric(FT_PCT)
-  )
+    across(c(PTS, AGE, AST, REB, OREB, DREB ,TOV, BLK, FG_PCT, FG3_PCT, FT_PCT), as.numeric),
+    Position = as.factor(Position)
+    )
 
 ```
 

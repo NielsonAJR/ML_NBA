@@ -18,6 +18,8 @@ A evolução para um jogo sem posições fixas (*positionless basketball*) criou
 
 -   Um **erro de avaliação** no draft pode custar milhões e o futuro de uma franquia.
 
+![Posição na quadra](includes/basketball_positions.png)
+
 **Questionamento: Como identificar, de forma objetiva e escalável, onde um atleta terá maior impacto em quadra?**
 
 ## A Solução usando Machine Learning
