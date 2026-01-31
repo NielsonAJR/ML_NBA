@@ -83,6 +83,10 @@ dados_analise |>
 
 ```
 
+- As variáveis de desempenho apresentam heterogeneidade significativa, com amplitudes e desvios-padrão elevados em métricas como pontos, rebotes e assistências.
+
+- A diferença entre média e mediana em algumas variáveis aponta para assimetria à direita (positiva) nas distribuições.
+
 
 ### Variáveis Categóricas
 
@@ -92,6 +96,10 @@ table(dados_analise$Position) |>
   kable(col.names = c("Posição", "Frequência"))
  
 ```
+
+- Revela um desbalanceamento moderado entre classes, com algumas posições sendo mais representadas do que outras.
+
+- Esse cenário pode influenciar modelos de classificação supervisionada, favorecendo classes majoritárias.
 
 ## Visualização Gráfica
 
@@ -105,6 +113,8 @@ ggplot(dados_analise, aes(x = AGE)) +
        x = "Idade", y = "Frequência")
 
 ```
+
+
 
 ### Distribuição das posições
 
@@ -121,6 +131,10 @@ ggplot(dados_analise, aes(x = Position)) +
 
 ```
 
+- A distribuição etária dos jogadores mostra concentração em faixas específicas 
+
+- O gráfico de distribuição por posição reforça a existência de diferenças estruturais entre os papéis exercidos em quadra, especialmente quando analisadas variáveis ofensivas e defensivas.
+
 ### Pontos por posição
 
 ```{r}
@@ -132,6 +146,12 @@ ggplot(dados_analise, aes(x = Position, y = PTS, fill = Position)) +
 
 
 ```
+
+- O Boxplot de pontuação evidenciam variações claras entre posições, tanto em termos de mediana quanto de dispersão.
+
+- Algumas posições apresentam maior variabilidade ofensiva, enquanto outras mostram distribuições mais concentradas.
+
+- Os resultados sugerem que a pontuação é uma variável relevante para a modelagem.
 
 
 ### Separabilidade entre posições
@@ -149,6 +169,10 @@ ggplot(dados_analise, aes(x = AST, y = REB, color = Position)) +
 
 ```
 
+- Sobreposição considerável entre posições, especialmente entre aquelas com funções híbridas.
+
+- Esse comportamento sugere que relações multivariadas são mais informativas do que análises unidimensionais
+
 
 
 ### Eficiência no arremesso (FG%)
@@ -162,7 +186,9 @@ ggplot(dados_analise, aes(x = FG_PCT)) +
 
 ```
 
+- Apresenta uma distribuição unimodal, com forte concentração em torno de valores intermediários (aproximadamente entre 0,40 e 0,55).
 
+- Como também, apresenta assimetria leve, com cauda estendida para valores mais altos e alguns valores extremos (próximos a 0 ou 1).
 
 ## Correlação entre variáveis numéricas
 
@@ -179,5 +205,20 @@ corrplot(
 
 
 ```
+
+- A matriz de correlação evidencia associações moderadas a fortes entre algumas variáveis de desempenho, como métricas relacionadas à produção ofensiva e defensiva.
+
+
+## Principais Insights da Análise Exploratória
+
+- Não há separação clara entre posições com base em uma única variável, reforçando a necessidade de abordagens multivariadas.
+
+- Existe sobreposição significativa entre posições adjacentes, o que justifica o estudo de conversão de posição e a modelagem baseada em perfis funcionais.
+
+- Variáveis de volume (pontos, rebotes, assistências) apresentam maior poder discriminativo do que métricas de eficiência isoladas.
+
+- O desbalanceamento entre classes pode influenciar os resultados da classificação, exigindo atenção na escolha de métricas e algoritmos.
+
+- A análise reforça a hipótese central do estudo: posições tradicionais não formam grupos totalmente distintos no espaço estatístico, abrindo espaço para modelos que identifiquem papéis híbridos.
 
 

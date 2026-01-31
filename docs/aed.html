@@ -177,6 +177,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#eficiência-no-arremesso-fg" id="toc-eficiência-no-arremesso-fg" class="nav-link" data-scroll-target="#eficiência-no-arremesso-fg"><span class="header-section-number">2.5</span> Eficiência no arremesso (FG%)</a></li>
   </ul></li>
   <li><a href="#correlação-entre-variáveis-numéricas" id="toc-correlação-entre-variáveis-numéricas" class="nav-link" data-scroll-target="#correlação-entre-variáveis-numéricas"><span class="header-section-number">3</span> Correlação entre variáveis numéricas</a></li>
+  <li><a href="#principais-insights-da-análise-exploratória" id="toc-principais-insights-da-análise-exploratória" class="nav-link" data-scroll-target="#principais-insights-da-análise-exploratória"><span class="header-section-number">4</span> Principais Insights da Análise Exploratória</a></li>
   </ul>
 </nav>
     </div>
@@ -371,6 +372,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
+<ul>
+<li><p>As variáveis de desempenho apresentam heterogeneidade significativa, com amplitudes e desvios-padrão elevados em métricas como pontos, rebotes e assistências.</p></li>
+<li><p>A diferença entre média e mediana em algumas variáveis aponta para assimetria à direita (positiva) nas distribuições.</p></li>
+</ul>
 </section>
 <section id="variáveis-categóricas" class="level3" data-number="1.2">
 <h3 data-number="1.2" class="anchored" data-anchor-id="variáveis-categóricas"><span class="header-section-number">1.2</span> Variáveis Categóricas</h3>
@@ -413,6 +418,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
+<ul>
+<li><p>Revela um desbalanceamento moderado entre classes, com algumas posições sendo mais representadas do que outras.</p></li>
+<li><p>Esse cenário pode influenciar modelos de classificação supervisionada, favorecendo classes majoritárias.</p></li>
+</ul>
 </section>
 </section>
 <section id="visualização-gráfica" class="level2" data-number="2">
@@ -457,6 +466,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<ul>
+<li><p>A distribuição etária dos jogadores mostra concentração em faixas específicas</p></li>
+<li><p>O gráfico de distribuição por posição reforça a existência de diferenças estruturais entre os papéis exercidos em quadra, especialmente quando analisadas variáveis ofensivas e defensivas.</p></li>
+</ul>
 </section>
 <section id="pontos-por-posição" class="level3" data-number="2.3">
 <h3 data-number="2.3" class="anchored" data-anchor-id="pontos-por-posição"><span class="header-section-number">2.3</span> Pontos por posição</h3>
@@ -476,6 +489,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<ul>
+<li><p>O Boxplot de pontuação evidenciam variações claras entre posições, tanto em termos de mediana quanto de dispersão.</p></li>
+<li><p>Algumas posições apresentam maior variabilidade ofensiva, enquanto outras mostram distribuições mais concentradas.</p></li>
+<li><p>Os resultados sugerem que a pontuação é uma variável relevante para a modelagem.</p></li>
+</ul>
 </section>
 <section id="separabilidade-entre-posições" class="level3" data-number="2.4">
 <h3 data-number="2.4" class="anchored" data-anchor-id="separabilidade-entre-posições"><span class="header-section-number">2.4</span> Separabilidade entre posições</h3>
@@ -498,6 +516,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<ul>
+<li><p>Sobreposição considerável entre posições, especialmente entre aquelas com funções híbridas.</p></li>
+<li><p>Esse comportamento sugere que relações multivariadas são mais informativas do que análises unidimensionais</p></li>
+</ul>
 </section>
 <section id="eficiência-no-arremesso-fg" class="level3" data-number="2.5">
 <h3 data-number="2.5" class="anchored" data-anchor-id="eficiência-no-arremesso-fg"><span class="header-section-number">2.5</span> Eficiência no arremesso (FG%)</h3>
@@ -517,6 +539,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<ul>
+<li><p>Apresenta uma distribuição unimodal, com forte concentração em torno de valores intermediários (aproximadamente entre 0,40 e 0,55).</p></li>
+<li><p>Como também, apresenta assimetria leve, com cauda estendida para valores mais altos e alguns valores extremos (próximos a 0 ou 1).</p></li>
+</ul>
 </section>
 </section>
 <section id="correlação-entre-variáveis-numéricas" class="level2" data-number="3">
@@ -538,6 +564,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<ul>
+<li>A matriz de correlação evidencia associações moderadas a fortes entre algumas variáveis de desempenho, como métricas relacionadas à produção ofensiva e defensiva.</li>
+</ul>
+</section>
+<section id="principais-insights-da-análise-exploratória" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="principais-insights-da-análise-exploratória"><span class="header-section-number">4</span> Principais Insights da Análise Exploratória</h2>
+<ul>
+<li><p>Não há separação clara entre posições com base em uma única variável, reforçando a necessidade de abordagens multivariadas.</p></li>
+<li><p>Existe sobreposição significativa entre posições adjacentes, o que justifica o estudo de conversão de posição e a modelagem baseada em perfis funcionais.</p></li>
+<li><p>Variáveis de volume (pontos, rebotes, assistências) apresentam maior poder discriminativo do que métricas de eficiência isoladas.</p></li>
+<li><p>O desbalanceamento entre classes pode influenciar os resultados da classificação, exigindo atenção na escolha de métricas e algoritmos.</p></li>
+<li><p>A análise reforça a hipótese central do estudo: posições tradicionais não formam grupos totalmente distintos no espaço estatístico, abrindo espaço para modelos que identifiquem papéis híbridos.</p></li>
+</ul>
 
 
 </section>
