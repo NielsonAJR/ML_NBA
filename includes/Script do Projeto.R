@@ -9,7 +9,6 @@ library(skimr) # Estatística descritiva rápida
 library(DataExplorer) # Exploração do conjunto de dados
 library(corrplot) # Gráfico de correlação
 library(GGally) # Gráficos adicionais com estrutura ggplot2
-library(stringr) # Para lidar com strings
 library(glmnet) # LASSO, Ridge e Rede Elástica
 library(MASS) # Discriminante Linear (LDA) e Quadrático (RL)
 library(recipes) # Pré-processamento dos dados
@@ -21,6 +20,15 @@ library(finetune) # Otimização fina de hiperparâmetros
 library(gt)
 library(naivebayes)
 library(corrplot)
+library(baguette)
+library(workflowsets)
+library(knitr)
+library(corrplot)
+library(rpart.plot)
+library(ranger)
+library(xgboost)
+library(kernlab)
+library(nnet)
 
 ggplot2::theme_set(theme_minimal()) # Ajustando Tema
 
@@ -241,7 +249,7 @@ dados_analise <- dados_basicos |>
                          "MJ Walker") ~ "SG",
       TRUE ~ "To_Map" 
     ),
-    across(c(PTS, AGE, AST, REB, OREB, DREB ,TOV, BLK, FG_PCT, FG3_PCT, FT_PCT), as.numeric),
+    across(c(PTS, AGE, AST, REB, OREB, DREB ,TOV, STL, BLK, FG_PCT, FG3_PCT, FT_PCT), as.numeric),
     Position = as.factor(Position)
     )
 
@@ -610,7 +618,7 @@ best_set_lda = grid_results %>%
   extract_workflow_set_result("lda_fit") %>% 
   select_best(metric = "accuracy")
 best_set_qda = grid_results %>% 
-  extract_workflow_set_result("qda_fit") %>% 
+  extract_workflow_set_result("qda_fit") %>%
   select_best(metric = "accuracy")
 
 
