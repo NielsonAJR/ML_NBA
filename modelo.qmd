@@ -173,15 +173,15 @@ fit_dtree %>%
 
 ```{r}
 
-# Criar uma função reutilizável
+
 plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) {
   
-  # Calcular matriz de confusão
+
   cm <- model %>%
     augment(new_data = new_data) %>%
     conf_mat(truth = {{ truth_col }}, estimate = {{ pred_col }})
   
-  # Preparar dados para o heatmap (percentual por linha - recomendado)
+
   total_obs <- sum(cm$table)
   
   cm_plot_data <- cm$table %>%
@@ -194,7 +194,7 @@ plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) 
     ) %>%
     ungroup()
   
-  # Criar o gráfico
+
   p <- ggplot(cm_plot_data, aes(x = Truth, y = Prediction, fill = percent)) +
     geom_tile(color = "white", size = 1) +
     geom_text(aes(label = label), size = 4, color = "black", fontface = "bold") +
@@ -223,7 +223,7 @@ plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) 
   return(p)
 }
 
-# Usar a função
+
 plot_confusion_matrix_percent(
   model = fit_dtree,
   new_data = test_data,
@@ -315,15 +315,15 @@ fit_dtreep %>%
 
 ```{r}
 
-# Criar uma função reutilizável
+
 plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) {
   
-  # Calcular matriz de confusão
+
   cm <- model %>%
     augment(new_data = new_data) %>%
     conf_mat(truth = {{ truth_col }}, estimate = {{ pred_col }})
   
-  # Preparar dados para o heatmap (percentual por linha - recomendado)
+
   total_obs <- sum(cm$table)
   
   cm_plot_data <- cm$table %>%
@@ -336,7 +336,7 @@ plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) 
     ) %>%
     ungroup()
   
-  # Criar o gráfico
+
   p <- ggplot(cm_plot_data, aes(x = Truth, y = Prediction, fill = percent)) +
     geom_tile(color = "white", size = 1) +
     geom_text(aes(label = label), size = 4, color = "black", fontface = "bold") +
@@ -365,7 +365,7 @@ plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) 
   return(p)
 }
 
-# Usar a função
+
 plot_confusion_matrix_percent(
   model = fit_dtreep,
   new_data = test_data,

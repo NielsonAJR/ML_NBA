@@ -381,7 +381,210 @@ prepped_data <- dados_analise_rec |> # usa a receita
   juice()# extrai apenas o dataframe preprocessado
 
 
+dtree_spec <- decision_tree() %>% # Decision tree
+  set_engine(engine = "rpart") %>%
+  set_mode("classification")
+
+wf_dtree <- workflow() %>%
+  add_recipe(dados_analise_rec) %>%
+  add_model(dtree_spec)
+
+fit_dtree <- wf_dtree %>%
+  fit(data = train_data)
+
+fit_dtree %>% 
+  extract_fit_engine() 
+
+fit_dtree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+
+plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) {
+  
+
+  cm <- model %>%
+    augment(new_data = new_data) %>%
+    conf_mat(truth = {{ truth_col }}, estimate = {{ pred_col }})
+  
+
+  total_obs <- sum(cm$table)
+  
+  cm_plot_data <- cm$table %>%
+    as.data.frame() %>%
+    rename(Prediction = Prediction, Truth = Truth, Count = Freq) %>%
+    group_by(Truth) %>%
+    mutate(
+      percent = (Count / sum(Count)) * 100,
+      label = sprintf("%.1f%%", percent)
+    ) %>%
+    ungroup()
+  
+
+  p <- ggplot(cm_plot_data, aes(x = Truth, y = Prediction, fill = percent)) +
+    geom_tile(color = "white", size = 1) +
+    geom_text(aes(label = label), size = 4, color = "black", fontface = "bold") +
+    scale_fill_gradient2(
+      low = "#f7f7f7",
+      mid = "#add8e6",
+      high = "#2c7fb8",
+      midpoint = 50,
+      name = "Percentual\npor Classe (%)"
+    ) +
+    labs(
+      title = "Matriz de Confusão - Percentual por Classe Real",
+      subtitle = "Valores mostram o percentual de cada classe real que foi prevista em cada categoria",
+      x = "Classe Real",
+      y = "Classe Prevista"
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+      axis.text.y = element_text(size = 10),
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+      plot.subtitle = element_text(hjust = 0.5, size = 10, color = "gray50"),
+      legend.position = "right"
+    )
+  
+  return(p)
+}
+
+
+plot_confusion_matrix_percent(
+  model = fit_dtree,
+  new_data = test_data,
+  truth_col = Position,
+  pred_col = .pred_class
+)
+
+metricas<- metric_set(accuracy, sens, recall, spec, precision, ppv, npv)
+
+bind_rows(
+  fit_dtree %>%
+    augment(new_data = train_data) %>%
+    mutate(dataset = "Treino"),
+  
+  fit_dtree %>%
+    augment(new_data = test_data) %>%
+    mutate(dataset = "Teste")
+) %>%
+  group_by(dataset) %>%
+  metricas(truth = Position, estimate = .pred_class) %>%
+  dplyr::select(dataset, .metric, .estimate) %>%
+  pivot_wider(names_from = .metric, values_from = .estimate) %>%
+  mutate(across(-dataset, round, 3)) %>%
+  gt()
+
 cv_folds <- vfold_cv(train_data, v = 10, strata = Position)
+
+dtreep_spec <- decision_tree(cost_complexity = tune()) %>% # Decision tree
+  set_engine(engine = "rpart") %>%
+  set_mode("classification")
+
+wf_dtreep <- workflow() %>%
+  add_recipe(dados_analise_rec) %>%
+  add_model(dtreep_spec)
+
+ctrl <- control_grid(save_pred = TRUE)
+my_metrics<- metric_set(accuracy, sens, spec, precision)
+
+dtreep_res <- wf_dtreep %>%
+  tune_grid(
+    resamples = cv_folds,
+    grid = 10,
+    control = ctrl,
+    metrics = my_metrics
+  )
+
+best_dtreep_res <- dtreep_res %>%
+  select_best(metric = "accuracy")
+
+best_dtreep_res
+
+fit_dtreep <- wf_dtreep %>%
+  finalize_workflow(best_dtreep_res) %>%
+  fit(data = train_data)
+
+fit_dtreep %>% 
+  extract_fit_engine() 
+
+fit_dtreep %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+
+plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) {
+  
+
+  cm <- model %>%
+    augment(new_data = new_data) %>%
+    conf_mat(truth = {{ truth_col }}, estimate = {{ pred_col }})
+  
+
+  total_obs <- sum(cm$table)
+  
+  cm_plot_data <- cm$table %>%
+    as.data.frame() %>%
+    rename(Prediction = Prediction, Truth = Truth, Count = Freq) %>%
+    group_by(Truth) %>%
+    mutate(
+      percent = (Count / sum(Count)) * 100,
+      label = sprintf("%.1f%%", percent)
+    ) %>%
+    ungroup()
+  
+
+  p <- ggplot(cm_plot_data, aes(x = Truth, y = Prediction, fill = percent)) +
+    geom_tile(color = "white", size = 1) +
+    geom_text(aes(label = label), size = 4, color = "black", fontface = "bold") +
+    scale_fill_gradient2(
+      low = "#f7f7f7",
+      mid = "#add8e6",
+      high = "#2c7fb8",
+      midpoint = 50,
+      name = "Percentual\npor Classe (%)"
+    ) +
+    labs(
+      title = "Matriz de Confusão - Percentual por Classe Real",
+      subtitle = "Valores mostram o percentual de cada classe real que foi prevista em cada categoria",
+      x = "Classe Real",
+      y = "Classe Prevista"
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+      axis.text.y = element_text(size = 10),
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+      plot.subtitle = element_text(hjust = 0.5, size = 10, color = "gray50"),
+      legend.position = "right"
+    )
+  
+  return(p)
+}
+
+
+plot_confusion_matrix_percent(
+  model = fit_dtreep,
+  new_data = test_data,
+  truth_col = Position,
+  pred_col = .pred_class
+)
+
+metricas<- metric_set(accuracy, sens, recall, spec, precision, ppv, npv)
+
+bind_rows(
+  fit_dtreep %>%
+    augment(new_data = train_data) %>%
+    mutate(dataset = "Treino"),
+  
+  fit_dtreep %>%
+    augment(new_data = test_data) %>%
+    mutate(dataset = "Teste")
+) %>%
+  group_by(dataset) %>%
+  metricas(truth = Position, estimate = .pred_class) %>%
+  dplyr::select(dataset, .metric, .estimate) %>%
+  pivot_wider(names_from = .metric, values_from = .estimate) %>%
+  mutate(across(-dataset, round, 3)) %>%
+  gt()
 
 
 knn_spec <- nearest_neighbor(neighbors = tune()) %>% # K-NN
@@ -405,6 +608,59 @@ qda_spec <- discrim_quad() %>% # Quadratic discriminant analysis
   set_engine("MASS") %>%
   set_mode("classification")
 
+dt_spec <- decision_tree(cost_complexity = tune(),
+                         min_n = tune(),
+                         tree_depth = tune()) %>% # Decision tree
+  set_engine(engine = "rpart") %>%
+  set_mode("classification")
+
+bt_spec <- bag_tree(cost_complexity = tune(),
+                    min_n = tune(),
+                    tree_depth = tune()) %>% # Bagged trees 
+  set_engine("rpart") %>% 
+  set_mode("classification")
+
+rf_spec <- rand_forest(mtry = tune(),
+                       min_n = tune(),
+                       trees = tune()) %>% # Random forest
+  set_engine(engine = "ranger") %>% 
+  set_mode("classification")
+
+xgb_spec <- boost_tree(tree_depth = tune(),
+                       learn_rate = tune(),
+                       loss_reduction = tune(),
+                       min_n = tune(),
+                       sample_size = tune(),
+                       trees = tune(),
+                       mtry = tune()) %>% # Boosted trees
+  set_engine(engine = "xgboost") %>%
+  set_mode("classification")
+
+lsvm_spec <- svm_linear(cost = tune(),
+                        margin = tune()) %>% # Linear SVM
+  set_engine(engine = "kernlab") %>%
+  set_mode("classification")
+
+rsvm_spec <- svm_rbf(cost = tune(),
+                     rbf_sigma = tune(),
+                     margin = tune()) %>% # RBF/Gaussian kernel SVM
+  set_engine(engine = "kernlab") %>%
+  set_mode("classification")
+
+psvm_spec <- svm_poly(cost = tune(),
+                      degree = tune(),
+                      scale_factor = tune(),
+                      margin = tune()) %>% # Polynomial kernel SVM
+  set_engine("kernlab") %>%
+  set_mode("classification")
+
+nn_spec <- mlp(
+  hidden_units = tune(),
+  penalty = tune(),
+  epochs = tune()
+) %>%
+  set_engine("nnet") %>% # Multilayer perceptron 
+  set_mode("classification")
 
 wf = workflow_set(
   preproc = list(dados_analise_rec),
@@ -413,7 +669,15 @@ wf = workflow_set(
     nbayes_fit = nbayes_spec,
     linear_fit = multinom_spec,
     lda_fit = lda_spec,
-    qda_fit = qda_spec
+    qda_fit = qda_spec,
+    dt_fit = dt_spec,
+    bt_fit = bt_spec,
+    rf_fit = rf_spec,
+    xgb_fit = xgb_spec,
+    lsvm_fit = lsvm_spec,
+    rsvm_fit = rsvm_spec,
+    psvm_fit = psvm_spec,
+    nn_fit =nn_spec
   )
 ) %>%
   mutate(wflow_id = gsub("(recipe_)", "", wflow_id))
@@ -435,7 +699,10 @@ grid_results = wf %>%
 
 autoplot(grid_results, metric = "accuracy")
 
+
 autoplot(grid_results, select_best = TRUE ,metric = "accuracy")
+
+
 
 autoplot(grid_results)
 
@@ -445,6 +712,8 @@ results_acc = workflowsets::rank_results(grid_results,
   filter(.metric == "accuracy") %>%
   dplyr::select(wflow_id, mean, std_err, model, rank)
 results_acc %>% gt()
+
+
 
 best_set_linear = grid_results %>% 
   extract_workflow_set_result("linear_fit") %>% 
@@ -462,6 +731,32 @@ best_set_qda = grid_results %>%
   extract_workflow_set_result("qda_fit") %>% 
   select_best(metric = "accuracy")
 
+best_set_dt = grid_results %>% 
+  extract_workflow_set_result("dt_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_bt = grid_results %>% 
+  extract_workflow_set_result("bt_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_rf = grid_results %>% 
+  extract_workflow_set_result("rf_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_xgb = grid_results %>% 
+  extract_workflow_set_result("xgb_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_lsvm = grid_results %>% 
+  extract_workflow_set_result("lsvm_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_rsvm = grid_results %>% 
+  extract_workflow_set_result("rsvm_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_psvm = grid_results %>% 
+  extract_workflow_set_result("psvm_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_nn = grid_results %>% 
+  extract_workflow_set_result("nn_fit") %>% 
+  select_best(metric = "accuracy")
+
+
 test_results <- function(rc_rslts, fit_obj, par_set, split_obj) {
   res <- rc_rslts %>%
     extract_workflow(fit_obj) %>%
@@ -474,32 +769,73 @@ test_results <- function(rc_rslts, fit_obj, par_set, split_obj) {
   res
 }
 
+
 test_results_linear = test_results(grid_results,"linear_fit",best_set_linear,dados_analise_split)
 test_results_knn = test_results(grid_results,"knn_fit",best_set_knn,dados_analise_split)
 test_results_nbayes = test_results(grid_results,"nbayes_fit",best_set_nbayes,dados_analise_split)
 test_results_lda = test_results(grid_results,"lda_fit",best_set_lda,dados_analise_split)
 test_results_qda = test_results(grid_results,"qda_fit",best_set_qda,dados_analise_split)
+test_results_dt = test_results(grid_results,"dt_fit",best_set_dt,dados_analise_split)
+test_results_bt = test_results(grid_results,"bt_fit",best_set_bt,dados_analise_split)
+test_results_rf = test_results(grid_results,"rf_fit",best_set_rf,dados_analise_split)
+test_results_xgb = test_results(grid_results,"xgb_fit",best_set_xgb,dados_analise_split)
+test_results_lsvm = test_results(grid_results,"lsvm_fit",best_set_lsvm,dados_analise_split)
+test_results_rsvm = test_results(grid_results,"rsvm_fit",best_set_rsvm,dados_analise_split)
+test_results_psvm = test_results(grid_results,"psvm_fit",best_set_psvm,dados_analise_split)
+test_results_nn = test_results(grid_results,"nn_fit",best_set_nn,dados_analise_split)
+
 
 metrics_table = rbind(
   collect_metrics(test_results_linear)$.estimate,
   collect_metrics(test_results_knn)$.estimate,
   collect_metrics(test_results_nbayes)$.estimate,
   collect_metrics(test_results_lda)$.estimate,
-  collect_metrics(test_results_qda)$.estimate
+  collect_metrics(test_results_qda)$.estimate,
+  collect_metrics(test_results_dt)$.estimate,
+  collect_metrics(test_results_bt)$.estimate,
+  collect_metrics(test_results_rf)$.estimate,
+  collect_metrics(test_results_xgb)$.estimate,
+  collect_metrics(test_results_lsvm)$.estimate,
+  collect_metrics(test_results_rsvm)$.estimate,
+  collect_metrics(test_results_psvm)$.estimate,
+  collect_metrics(test_results_nn)$.estimate
 )
 
 metrics_table <- round(metrics_table, 4)
-rnms = c("multi_reg","k_nn","naive_bayes", "lin_discr","quad_discr")
+rnms <- c(
+  "Regressão Multinomial",
+  "KNN",
+  "Naive Bayes",
+  "Discriminante Linear",
+  "Discriminante Quadrático",
+  "Árvore de Decisão",
+  "Árvores Ensacadas",
+  "Floresta Aleatória",
+  "Árvores Boosted",
+  "SVM Linear",
+  "SVM RBF",
+  "SVM Polinomial",
+  "Rede Neural"
+)
 metrics_table <- cbind(rnms, metrics_table)
 metrics_table <- metrics_table %>% dplyr::as_tibble()
+
+
 
 colnames(metrics_table) = c("method","acc","roc_auc","f_meas",
                             "precision","recall","spec","kappa")
 
 
 metrics_table %>%
-  arrange(desc(acc),desc(roc_auc),desc(f_meas),desc(kappa)) %>%
-  gt()
+  arrange(desc(acc), desc(roc_auc), desc(f_meas), desc(kappa)) %>%
+  gt() %>%
+  tab_header(
+    title = "Métricas de Avaliação dos Modelos no Conjunto de Teste",
+    subtitle = "Abordagem Position Only"
+  )
+
+
+
 
 
 # Modelagem Alternativa ---------------------------------------------------
@@ -541,7 +877,217 @@ prepped_data <- dados_analise_rec |> # usa a receita
   juice()# extrai apenas o dataframe preprocessado
 
 
+tree_spec <- decision_tree() %>% # Decision tree
+  set_engine(engine = "rpart") %>%
+  set_mode("classification")
+
+wf_dtree <- workflow() %>%
+  add_recipe(dados_analise_rec) %>%
+  add_model(dtree_spec)
+
+fit_dtree <- wf_dtree %>%
+  fit(data = train_data)
+
+fit_dtree %>% 
+  extract_fit_engine() 
+
+fit_dtree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+
+plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) {
+  
+
+  cm <- model %>%
+    augment(new_data = new_data) %>%
+    conf_mat(truth = {{ truth_col }}, estimate = {{ pred_col }})
+  
+
+  total_obs <- sum(cm$table)
+  
+  cm_plot_data <- cm$table %>%
+    as.data.frame() %>%
+    rename(Prediction = Prediction, Truth = Truth, Count = Freq) %>%
+    group_by(Truth) %>%
+    mutate(
+      percent = (Count / sum(Count)) * 100,
+      label = sprintf("%.1f%%", percent)
+    ) %>%
+    ungroup()
+  
+
+  p <- ggplot(cm_plot_data, aes(x = Truth, y = Prediction, fill = percent)) +
+    geom_tile(color = "white", size = 1) +
+    geom_text(aes(label = label), size = 4, color = "black", fontface = "bold") +
+    scale_fill_gradient2(
+      low = "#f7f7f7",
+      mid = "#add8e6",
+      high = "#2c7fb8",
+      midpoint = 50,
+      name = "Percentual\npor Classe (%)"
+    ) +
+    labs(
+      title = "Matriz de Confusão - Percentual por Classe Real",
+      subtitle = "Valores mostram o percentual de cada classe real que foi prevista em cada categoria",
+      x = "Classe Real",
+      y = "Classe Prevista"
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+      axis.text.y = element_text(size = 10),
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+      plot.subtitle = element_text(hjust = 0.5, size = 10, color = "gray50"),
+      legend.position = "right"
+    )
+  
+  return(p)
+}
+
+
+plot_confusion_matrix_percent(
+  model = fit_dtree,
+  new_data = test_data,
+  truth_col = Court,
+  pred_col = .pred_class
+)
+
+metricas<- metric_set(accuracy, sens, recall, spec, precision, ppv, npv)
+
+bind_rows(
+  fit_dtree %>%
+    augment(new_data = train_data) %>%
+    mutate(dataset = "Treino"),
+  
+  fit_dtree %>%
+    augment(new_data = test_data) %>%
+    mutate(dataset = "Teste")
+) %>%
+  group_by(dataset) %>%
+  metricas(truth = Court, estimate = .pred_class) %>%
+  dplyr::select(dataset, .metric, .estimate) %>%
+  pivot_wider(names_from = .metric, values_from = .estimate) %>%
+  mutate(across(-dataset, round, 3)) %>%
+  gt()
+
+
 cv_folds <- vfold_cv(train_data, v = 10, strata = Court)
+
+dtreep_spec <- decision_tree(cost_complexity = tune()) %>% # Decision tree
+  set_engine(engine = "rpart") %>%
+  set_mode("classification")
+
+wf_dtreep <- workflow() %>%
+  add_recipe(dados_analise_rec) %>%
+  add_model(dtreep_spec)
+
+ctrl <- control_grid(save_pred = TRUE)
+my_metrics<- metric_set(accuracy, sens, spec, precision)
+
+dtreep_res <- wf_dtreep %>%
+  tune_grid(
+    resamples = cv_folds,
+    grid = 10,
+    control = ctrl,
+    metrics = my_metrics
+  )
+
+best_dtreep_res <- dtreep_res %>%
+  select_best(metric = "accuracy")
+
+best_dtreep_res
+
+
+fit_dtreep <- wf_dtreep %>%
+  finalize_workflow(best_dtreep_res) %>%
+  fit(data = train_data)
+
+fit_dtreep %>% 
+  extract_fit_engine() 
+
+
+fit_dtreep %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+
+
+
+
+plot_confusion_matrix_percent <- function(model, new_data, truth_col, pred_col) {
+  
+
+  cm <- model %>%
+    augment(new_data = new_data) %>%
+    conf_mat(truth = {{ truth_col }}, estimate = {{ pred_col }})
+  
+
+  total_obs <- sum(cm$table)
+  
+  cm_plot_data <- cm$table %>%
+    as.data.frame() %>%
+    rename(Prediction = Prediction, Truth = Truth, Count = Freq) %>%
+    group_by(Truth) %>%
+    mutate(
+      percent = (Count / sum(Count)) * 100,
+      label = sprintf("%.1f%%", percent)
+    ) %>%
+    ungroup()
+  
+
+  p <- ggplot(cm_plot_data, aes(x = Truth, y = Prediction, fill = percent)) +
+    geom_tile(color = "white", size = 1) +
+    geom_text(aes(label = label), size = 4, color = "black", fontface = "bold") +
+    scale_fill_gradient2(
+      low = "#f7f7f7",
+      mid = "#add8e6",
+      high = "#2c7fb8",
+      midpoint = 50,
+      name = "Percentual\npor Classe (%)"
+    ) +
+    labs(
+      title = "Matriz de Confusão - Percentual por Classe Real",
+      subtitle = "Valores mostram o percentual de cada classe real que foi prevista em cada categoria",
+      x = "Classe Real",
+      y = "Classe Prevista"
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+      axis.text.y = element_text(size = 10),
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+      plot.subtitle = element_text(hjust = 0.5, size = 10, color = "gray50"),
+      legend.position = "right"
+    )
+  
+  return(p)
+}
+
+
+plot_confusion_matrix_percent(
+  model = fit_dtreep,
+  new_data = test_data,
+  truth_col = Court,
+  pred_col = .pred_class
+)
+
+metricas<- metric_set(accuracy, sens, recall, spec, precision, ppv, npv)
+
+bind_rows(
+  fit_dtreep %>%
+    augment(new_data = train_data) %>%
+    mutate(dataset = "Treino"),
+  
+  fit_dtreep %>%
+    augment(new_data = test_data) %>%
+    mutate(dataset = "Teste")
+) %>%
+  group_by(dataset) %>%
+  metricas(truth = Court, estimate = .pred_class) %>%
+  dplyr::select(dataset, .metric, .estimate) %>%
+  pivot_wider(names_from = .metric, values_from = .estimate) %>%
+  mutate(across(-dataset, round, 3)) %>%
+  gt()
+
 
 knn_spec <- nearest_neighbor(neighbors = tune()) %>% # K-NN
   set_engine("kknn")%>%
@@ -564,6 +1110,61 @@ qda_spec <- discrim_quad() %>% # Quadratic discriminant analysis
   set_engine("MASS") %>%
   set_mode("classification")
 
+dt_spec <- decision_tree(cost_complexity = tune(),
+                         min_n = tune(),
+                         tree_depth = tune()) %>% # Decision tree
+  set_engine(engine = "rpart") %>%
+  set_mode("classification")
+
+bt_spec <- bag_tree(cost_complexity = tune(),
+                    min_n = tune(),
+                    tree_depth = tune()) %>% # Bagged trees 
+  set_engine("rpart") %>% 
+  set_mode("classification")
+
+rf_spec <- rand_forest(mtry = tune(),
+                       min_n = tune(),
+                       trees = tune()) %>% # Random forest
+  set_engine(engine = "ranger") %>% 
+  set_mode("classification")
+
+xgb_spec <- boost_tree(tree_depth = tune(),
+                       learn_rate = tune(),
+                       loss_reduction = tune(),
+                       min_n = tune(),
+                       sample_size = tune(),
+                       trees = tune(),
+                       mtry = tune()) %>% # Boosted trees
+  set_engine(engine = "xgboost") %>%
+  set_mode("classification")
+
+lsvm_spec <- svm_linear(cost = tune(),
+                        margin = tune()) %>% # Linear SVM
+  set_engine(engine = "kernlab") %>%
+  set_mode("classification")
+
+rsvm_spec <- svm_rbf(cost = tune(),
+                     rbf_sigma = tune(),
+                     margin = tune()) %>% # RBF/Gaussian kernel SVM
+  set_engine(engine = "kernlab") %>%
+  set_mode("classification")
+
+psvm_spec <- svm_poly(cost = tune(),
+                      degree = tune(),
+                      scale_factor = tune(),
+                      margin = tune()) %>% # Polynomial kernel SVM
+  set_engine("kernlab") %>%
+  set_mode("classification")
+
+nn_spec <- mlp(
+  hidden_units = tune(),
+  penalty = tune(),
+  epochs = tune()
+) %>%
+  set_engine("nnet") %>% # Multilayer perceptron 
+  set_mode("classification")
+
+
 
 wf = workflow_set(
   preproc = list(dados_analise_rec),
@@ -572,10 +1173,19 @@ wf = workflow_set(
     nbayes_fit = nbayes_spec,
     linear_fit = logistic_spec,
     lda_fit = lda_spec,
-    qda_fit = qda_spec
+    qda_fit = qda_spec,
+    dt_fit = dt_spec,
+    bt_fit = bt_spec,
+    rf_fit = rf_spec,
+    xgb_fit = xgb_spec,
+    lsvm_fit = lsvm_spec,
+    rsvm_fit = rsvm_spec,
+    psvm_fit = psvm_spec,
+    nn_fit =nn_spec
   )
 ) %>%
   mutate(wflow_id = gsub("(recipe_)", "", wflow_id))
+
 
 
 grid_ctrl = control_grid(
@@ -594,9 +1204,12 @@ grid_results = wf %>%
 
 autoplot(grid_results, metric = "accuracy")
 
+
 autoplot(grid_results, select_best = TRUE ,metric = "accuracy")
 
+
 autoplot(grid_results)
+
 
 results_acc = workflowsets::rank_results(grid_results,
                                          select_best = TRUE,
@@ -604,6 +1217,7 @@ results_acc = workflowsets::rank_results(grid_results,
   filter(.metric == "accuracy") %>%
   dplyr::select(wflow_id, mean, std_err, model, rank)
 results_acc %>% gt()
+
 
 best_set_linear = grid_results %>% 
   extract_workflow_set_result("linear_fit") %>% 
@@ -618,8 +1232,34 @@ best_set_lda = grid_results %>%
   extract_workflow_set_result("lda_fit") %>% 
   select_best(metric = "accuracy")
 best_set_qda = grid_results %>% 
-  extract_workflow_set_result("qda_fit") %>%
+  extract_workflow_set_result("qda_fit") %>% 
   select_best(metric = "accuracy")
+best_set_dt = grid_results %>% 
+  extract_workflow_set_result("dt_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_bt = grid_results %>% 
+  extract_workflow_set_result("bt_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_rf = grid_results %>% 
+  extract_workflow_set_result("rf_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_xgb = grid_results %>% 
+  extract_workflow_set_result("xgb_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_lsvm = grid_results %>% 
+  extract_workflow_set_result("lsvm_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_rsvm = grid_results %>% 
+  extract_workflow_set_result("rsvm_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_psvm = grid_results %>% 
+  extract_workflow_set_result("psvm_fit") %>% 
+  select_best(metric = "accuracy")
+best_set_nn = grid_results %>% 
+  extract_workflow_set_result("nn_fit") %>% 
+  select_best(metric = "accuracy")
+
+
 
 
 test_results <- function(rc_rslts, fit_obj, par_set, split_obj) {
@@ -635,11 +1275,21 @@ test_results <- function(rc_rslts, fit_obj, par_set, split_obj) {
 }
 
 
+
 test_results_linear = test_results(grid_results,"linear_fit",best_set_linear,dados_analise_split)
 test_results_knn = test_results(grid_results,"knn_fit",best_set_knn,dados_analise_split)
 test_results_nbayes = test_results(grid_results,"nbayes_fit",best_set_nbayes,dados_analise_split)
 test_results_lda = test_results(grid_results,"lda_fit",best_set_lda,dados_analise_split)
 test_results_qda = test_results(grid_results,"qda_fit",best_set_qda,dados_analise_split)
+test_results_dt = test_results(grid_results,"dt_fit",best_set_dt,dados_analise_split)
+test_results_bt = test_results(grid_results,"bt_fit",best_set_bt,dados_analise_split)
+test_results_rf = test_results(grid_results,"rf_fit",best_set_rf,dados_analise_split)
+test_results_xgb = test_results(grid_results,"xgb_fit",best_set_xgb,dados_analise_split)
+test_results_lsvm = test_results(grid_results,"lsvm_fit",best_set_lsvm,dados_analise_split)
+test_results_rsvm = test_results(grid_results,"rsvm_fit",best_set_rsvm,dados_analise_split)
+test_results_psvm = test_results(grid_results,"psvm_fit",best_set_psvm,dados_analise_split)
+test_results_nn = test_results(grid_results,"nn_fit",best_set_nn,dados_analise_split)
+
 
 
 metrics_table = rbind(
@@ -647,26 +1297,48 @@ metrics_table = rbind(
   collect_metrics(test_results_knn)$.estimate,
   collect_metrics(test_results_nbayes)$.estimate,
   collect_metrics(test_results_lda)$.estimate,
-  collect_metrics(test_results_qda)$.estimate
+  collect_metrics(test_results_qda)$.estimate,
+  collect_metrics(test_results_dt)$.estimate,
+  collect_metrics(test_results_bt)$.estimate,
+  collect_metrics(test_results_rf)$.estimate,
+  collect_metrics(test_results_xgb)$.estimate,
+  collect_metrics(test_results_lsvm)$.estimate,
+  collect_metrics(test_results_rsvm)$.estimate,
+  collect_metrics(test_results_psvm)$.estimate,
+  collect_metrics(test_results_nn)$.estimate
 )
 
 metrics_table <- round(metrics_table, 4)
-rnms = c("logistic_reg","k_nn","naive_bayes", "lin_discr","quad_discr")
+rnms <- c(
+  "Regressão Logística",
+  "KNN",
+  "Naive Bayes",
+  "Discriminante Linear",
+  "Discriminante Quadrático",
+  "Árvore de Decisão",
+  "Árvores Ensacadas",
+  "Floresta Aleatória",
+  "Árvores Boosted",
+  "SVM Linear",
+  "SVM RBF",
+  "SVM Polinomial",
+  "Rede Neural"
+)
 metrics_table <- cbind(rnms, metrics_table)
 metrics_table <- metrics_table %>% dplyr::as_tibble()
+
+
 
 colnames(metrics_table) = c("method","acc","roc_auc","f_meas",
                             "precision","recall","spec","kappa")
 
+
+
 metrics_table %>%
-  arrange(desc(acc),desc(roc_auc),desc(f_meas),desc(kappa)) %>%
-  gt()
-
-
-
-
-
-
-
-
+  arrange(desc(acc), desc(roc_auc), desc(f_meas), desc(kappa)) %>%
+  gt() %>%
+  tab_header(
+    title = "Métricas de Avaliação dos Modelos no Conjunto de Teste",
+    subtitle = "Abordagem Backcourt/Frontcourt"
+  )
 
